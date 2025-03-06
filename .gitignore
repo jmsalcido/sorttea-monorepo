@@ -1,4 +1,4 @@
- # General
+# General
 .DS_Store
 .idea/
 .vscode/
@@ -43,6 +43,15 @@ pip-log.txt
 pip-delete-this-directory.txt
 backend/logs/*
 !backend/logs/.gitkeep
+
+# Database
+*.db
+*.db-journal
+*.db-trace
+*.db-wal
+*.db-shm
+*.db-lock
+db.sqlite3
 
 # Poetry
 .venv/
