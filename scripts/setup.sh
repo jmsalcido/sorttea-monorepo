@@ -91,8 +91,7 @@ fi
 
 # Install dependencies
 echo -e "${YELLOW}Installing frontend dependencies...${NC}"
-echo -e "${YELLOW}Note: Using --legacy-peer-deps to handle React 19 compatibility issues${NC}"
-npm install --legacy-peer-deps
+npm install
 
 echo -e "${GREEN}Frontend setup complete.${NC}"
 

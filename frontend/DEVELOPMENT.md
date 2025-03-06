@@ -1,44 +1,54 @@
 # Frontend Development Guide
 
-## React 19 Compatibility Notes
+## Technology Stack
 
-This project uses React 19, which is the latest version of React. However, some of our dependencies were built for React 18 or earlier and have peer dependency requirements that specifically exclude React 19.
+This project uses:
 
-### Known Compatibility Issues
+- **Next.js 15.x**: The React framework for production
+- **React 18.x**: A JavaScript library for building user interfaces
+- **TailwindCSS 4.x**: A utility-first CSS framework
+- **TypeScript**: For type-safe JavaScript
 
-- `react-day-picker@8.10.1` expects React version "^16.8.0 || ^17.0.0 || ^18.0.0"
-- There may be other dependencies with similar restrictions
+## Development Setup
 
-### Solution
+Refer to the root README.md file for instructions on setting up the development environment.
 
-We're currently using the `--legacy-peer-deps` flag with npm to override these compatibility checks. This allows us to use React 19 with these older dependencies, but it may lead to unexpected behavior if the dependencies rely on specific React internals that have changed.
+## UI Component Architecture
 
-When running npm commands, always use the `--legacy-peer-deps` flag:
+The project follows a component-based architecture:
 
-```bash
-npm install --legacy-peer-deps
-npm install some-package --legacy-peer-deps
-```
+- **Page Components**: Found in `src/pages`, define routes in the application
+- **UI Components**: Reusable components like buttons, inputs, cards, etc.
+- **Layout Components**: Define the structure of the application
+- **Feature Components**: Implement specific features or business logic
 
-Or use the custom script we've added:
+## State Management
 
-```bash
-npm run install
-```
+We use a combination of:
 
-### Long-term Solutions
+- **React Context**: For global state that needs to be accessed by many components
+- **Zustand**: For more complex state management scenarios
+- **React Query**: For server state management and data fetching
 
-As React 19 becomes more widely adopted, we should:
+## Working with API
 
-1. Look for updated versions of dependencies that support React 19
-2. Consider contributing to open source projects to add React 19 support
-3. Replace components with alternatives that support React 19
+- API calls are made using the Fetch API or React Query
+- The API URL is configured in the `.env.local` file
 
-### Verifying Component Behavior
+## Styling
 
-Since we're using dependencies with React 19 that weren't officially tested with this version, be especially thorough when testing components that use:
+- Tailwind CSS is used for styling components
+- Custom styles should be avoided when possible
+- Use Tailwind classes for responsive design
 
-- react-day-picker (date picking functionality)
-- Any other third-party React components
+## Testing
 
-Document any unexpected behavior in the project issues. 
+- Write tests for components using React Testing Library
+- Run tests with `npm test`
+
+## Best Practices
+
+- Follow the React 18 documentation for best practices
+- Use functional components with hooks
+- Use TypeScript types for props, state, and function parameters
+- Keep components small and focused on a single responsibility 
