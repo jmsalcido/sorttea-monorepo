@@ -46,7 +46,6 @@ backend/logs/*
 
 # Poetry
 .venv/
-poetry.lock
 
 # Node / Frontend
 node_modules/
