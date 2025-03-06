@@ -1,24 +1,152 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SortTea Frontend
+
+SortTea is a giveaway verification platform integrated with Instagram. This frontend application provides a seamless experience for users to create, manage, and verify giveaway campaigns.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 18+ 
+- npm or yarn
+- A backend API server (see Backend Setup below)
+
+### Installation
+
+1. Clone the repository
+2. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+4. Copy `.env.local.example` to `.env.local` and update the values:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+5. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Connecting to the Backend
+
+The frontend and backend communicate through REST API calls. Here's how it works:
+
+### 1. Environment Configuration
+
+Make sure your `.env.local` file contains the correct backend API URL:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Change this to match your backend server's address. The frontend will use this URL as the base for all API requests.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Authentication Flow
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application uses NextAuth.js for authentication:
+
+1. Users sign in using OAuth providers (Google, Facebook)
+2. NextAuth exchanges the provider token for a JWT
+3. The JWT is stored in a secure HTTP-only cookie
+4. API requests automatically include the token
+5. The backend validates the token for each request
+
+### 3. API Services
+
+API requests are structured through service classes:
+
+- `ApiClient` - Base client that handles auth headers and error handling
+- `GiveawayService` - Methods for giveaway CRUD operations
+- `AnalyticsService` - Methods for fetching analytics data
+- `UserService` - Methods for user profile and management
+
+### 4. Data Fetching with React Query
+
+The application uses TanStack Query (React Query) for data fetching:
+
+1. Custom hooks in the `hooks` directory encapsulate API calls
+2. Components use these hooks to fetch, cache, and synchronize server state
+3. Mutations handle data updates with automatic invalidation
+4. Loading and error states are managed automatically
+
+Example:
+```jsx
+// Using the useGiveaways hook
+const { data, isLoading, isError } = useGiveaways();
+
+// Data is automatically cached and refreshed when needed
+```
+
+## Backend Setup
+
+To run the frontend with a functioning backend:
+
+1. Set up the SortTea API server
+2. Configure OAuth credentials for NextAuth
+3. Update connection details in `.env.local`
+
+### Expected API Endpoints
+
+The frontend expects these API endpoints to be available:
+
+- `/api/giveaways` - Giveaway management
+- `/api/analytics` - Analytics and reporting
+- `/api/users` - User profile management
+
+Refer to the API documentation for detailed endpoint specifications.
+
+## Authentication Configuration
+
+To set up authentication:
+
+1. Create OAuth applications in Google and Facebook developer consoles
+2. Add the credentials to your `.env.local` file
+3. Configure the callback URLs in your OAuth provider settings
+
+## Features
+
+- Single sign-on with OAuth 2.0
+- Giveaway creation and management
+- Entry verification system
+- Analytics and insights
+- Role-based access control
+- Light/dark mode support
+
+## Development
+
+### Folder Structure
+
+- `/app` - Next.js app router pages and layouts
+- `/components` - Reusable UI components
+- `/hooks` - Custom React hooks
+- `/lib` - Utility functions and helpers
+- `/services` - API service classes
+- `/stores` - State management
+- `/types` - TypeScript type definitions
+
+### Building for Production
+
+```bash
+npm run build
+# or
+yarn build
+```
+
+### Running Tests
+
+```bash
+npm test
+# or
+yarn test
+```
 
 ## Learn More
 

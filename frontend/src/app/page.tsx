@@ -341,9 +341,9 @@ export default function LandingPage() {
             <div className="space-y-4">
               <h4 className="text-sm font-bold">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="#" className="text-gray-500 dark:text-gray-400 hover:underline">Privacy Policy</Link></li>
-                <li><Link href="#" className="text-gray-500 dark:text-gray-400 hover:underline">Terms of Service</Link></li>
-                <li><Link href="#" className="text-gray-500 dark:text-gray-400 hover:underline">Cookie Policy</Link></li>
+                <li><Link href="/privacy-policy" className="text-gray-500 dark:text-gray-400 hover:underline">Privacy Policy</Link></li>
+                <li><Link href="/terms-of-service" className="text-gray-500 dark:text-gray-400 hover:underline">Terms of Service</Link></li>
+                <li><Link href="/cookie-policy" className="text-gray-500 dark:text-gray-400 hover:underline">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
