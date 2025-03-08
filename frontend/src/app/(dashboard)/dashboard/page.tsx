@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { formatDate, formatNumber } from "@/lib/utils";
 import { useOverviewStats } from "@/hooks/use-analytics";
-import { useGiveaways, useUpcomingGiveaways } from "@/hooks/use-giveaways";
+import { useGiveaways, useUpcomingGiveaways, useActiveGiveawaysCount } from "@/hooks/use-giveaways";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMemo } from "react";
 import Link from "next/link";
@@ -28,16 +28,19 @@ export default function DashboardPage() {
   // Fetch overview statistics
   const { data: overviewStats, isLoading: statsLoading, isError: statsError } = useOverviewStats();
   
+  // Fetch active giveaways count
+  const { data: activeGiveawaysData, isLoading: activeGiveawaysLoading } = useActiveGiveawaysCount();
+  
   // Fetch upcoming giveaways (starting in next 7 days)
   const { data: upcomingGiveawaysData, isLoading: upcomingGiveawaysLoading, isError: upcomingGiveawaysError, error: upcomingGiveawaysErrorData } = useUpcomingGiveaways(5);
   
   // Log data for debugging
+  console.log('Active giveaways data:', activeGiveawaysData);
   console.log('Upcoming giveaways data:', upcomingGiveawaysData);
-  console.log('Upcoming giveaways error:', upcomingGiveawaysError, upcomingGiveawaysErrorData);
   
   // Prepare stats data with loading/error states
   const stats = useMemo(() => {
-    if (statsLoading) {
+    if (statsLoading || activeGiveawaysLoading) {
       return {
         activeGiveaways: null,
         totalParticipants: null,
@@ -49,22 +52,22 @@ export default function DashboardPage() {
     
     if (statsError) {
       return {
-        activeGiveaways: 0,
+        activeGiveaways: activeGiveawaysData?.count || 0,
         totalParticipants: 0,
         totalEngagement: 0,
         completionRate: 0,
-        upcomingGiveaways: 0
+        upcomingGiveaways: upcomingGiveawaysData?.total || 0
       };
     }
     
     return {
-      activeGiveaways: overviewStats?.activeGiveaways || 0,
+      activeGiveaways: activeGiveawaysData?.count || 0,
       totalParticipants: overviewStats?.totalParticipants || 0,
       totalEngagement: overviewStats?.totalEngagement || 0,
       completionRate: overviewStats?.completionRate || 0,
       upcomingGiveaways: upcomingGiveawaysData?.total || 0
     };
-  }, [statsLoading, statsError, overviewStats, upcomingGiveawaysData]);
+  }, [statsLoading, statsError, overviewStats, upcomingGiveawaysData, activeGiveawaysData, activeGiveawaysLoading]);
   
   return (
     <div className="space-y-6">
@@ -79,20 +82,62 @@ export default function DashboardPage() {
       <InstagramConnectCTA />
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className={`${stats.activeGiveaways ? 'border-l-4 border-l-green-500 dark:border-l-green-600' : ''}`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Giveaways</CardTitle>
-            <Trophy className="h-4 w-4 text-blue-500" />
+            <div className={`rounded-full p-1 ${stats.activeGiveaways ? 'bg-green-100 dark:bg-green-900/30' : 'bg-gray-100 dark:bg-gray-800'}`}>
+              <Trophy className={`h-4 w-4 ${stats.activeGiveaways ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`} />
+            </div>
           </CardHeader>
           <CardContent>
-            {statsLoading ? (
-              <Skeleton className="h-8 w-20" />
+            {statsLoading || activeGiveawaysLoading ? (
+              <Skeleton className="h-12 w-full" />
             ) : (
               <>
-                <div className="text-2xl font-bold">{stats.activeGiveaways}</div>
-                <p className="text-xs text-muted-foreground">
-                  {stats.upcomingGiveaways} upcoming
-                </p>
+                <div className="flex items-baseline gap-1">
+                  <div className="text-2xl font-bold">{stats.activeGiveaways}</div>
+                  <div className="text-sm text-muted-foreground">active now</div>
+                </div>
+                
+                {stats.upcomingGiveaways != null && stats.upcomingGiveaways > 0 ? (
+                  <div className="mt-2">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-green-600 dark:text-green-400 font-medium flex items-center gap-1">
+                        <TrendingUp className="h-3 w-3" />
+                        {stats.upcomingGiveaways} upcoming
+                      </span>
+                      <span className="text-gray-500 dark:text-gray-400">in next 7 days</span>
+                    </div>
+                    <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5">
+                      <div className="bg-gradient-to-r from-blue-500 to-green-500 h-1.5 rounded-full" style={{ width: `${Math.min(100, stats.upcomingGiveaways * 20)}%` }}></div>
+                    </div>
+                  </div>
+                ) : stats.activeGiveaways != null && stats.activeGiveaways > 0 ? (
+                  <div className="mt-2">
+                    <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-1">
+                      <Calendar className="h-3 w-3" />
+                      No upcoming giveaways scheduled
+                    </p>
+                    <Link 
+                      href="/giveaways/create" 
+                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 mt-1"
+                    >
+                      <PlusCircle className="h-3 w-3" />
+                      Schedule your next giveaway
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">No active giveaways right now</p>
+                    <Link 
+                      href="/giveaways/create" 
+                      className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800/30 px-2 py-1 rounded-md flex items-center gap-1 transition-colors"
+                    >
+                      <PlusCircle className="h-3 w-3" />
+                      Create your first giveaway
+                    </Link>
+                  </div>
+                )}
               </>
             )}
           </CardContent>
@@ -176,11 +221,21 @@ export default function DashboardPage() {
         </Card>
         
         <Card className="lg:col-span-3">
-          <CardHeader>
-            <CardTitle>Upcoming Giveaways</CardTitle>
-            <CardDescription>
-              Giveaways starting in the next 7 days
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>Upcoming Giveaways</CardTitle>
+              <CardDescription>
+                {upcomingGiveawaysData && upcomingGiveawaysData.total ? 
+                  `${upcomingGiveawaysData.total} giveaway${upcomingGiveawaysData.total !== 1 ? 's' : ''} scheduled in the next 7 days` :
+                  'Giveaways starting in the next 7 days'
+                }
+              </CardDescription>
+            </div>
+            {upcomingGiveawaysData && upcomingGiveawaysData.total > 0 && (
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
+                {upcomingGiveawaysData.total} upcoming
+              </Badge>
+            )}
           </CardHeader>
           <CardContent>
             {upcomingGiveawaysLoading ? (

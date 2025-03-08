@@ -250,4 +250,29 @@ export function useUpcomingGiveaways(limit: number = 5) {
       }
     },
   });
+}
+
+/**
+ * Hook for fetching active giveaways count
+ */
+export function useActiveGiveawaysCount() {
+  return useQuery({
+    queryKey: ["activeGiveawaysCount"],
+    queryFn: async () => {
+      try {
+        // Get active giveaways
+        const activeGiveaways = await giveawayService.getGiveaways({ 
+          status: 'active',
+          limit: 1 // We just need the count, not all records
+        });
+        
+        return {
+          count: activeGiveaways.total || 0
+        };
+      } catch (error) {
+        console.error('Failed to fetch active giveaways count:', error);
+        throw error;
+      }
+    },
+  });
 } 
