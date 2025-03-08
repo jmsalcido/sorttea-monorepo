@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -28,6 +29,7 @@ interface HeaderProps {
 
 export function Header({ toggleMobileMenu }: HeaderProps) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [notifications] = useState<number>(3); // For demo purposes
   
   return (
@@ -47,7 +49,12 @@ export function Header({ toggleMobileMenu }: HeaderProps) {
       </div>
       
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" className="hidden md:flex">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="hidden md:flex"
+          onClick={() => router.push('/giveaways/create')}
+        >
           <PlusCircle className="mr-2 h-4 w-4" />
           New Giveaway
         </Button>

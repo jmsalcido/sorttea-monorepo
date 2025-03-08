@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   Gift, 
@@ -9,7 +9,8 @@ import {
   Users, 
   Settings, 
   HelpCircle,
-  X
+  X,
+  PlusCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,7 @@ const NavItem = ({ href, icon: Icon, title, isActive }: NavItemProps) => (
 
 export function Sidebar({ isMobileOpen, setMobileOpen }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   
   const routes = [
     {
@@ -106,6 +108,19 @@ export function Sidebar({ isMobileOpen, setMobileOpen }: SidebarProps) {
         </div>
         
         <div className="flex-1 overflow-auto py-4 px-3">
+          <div className="mb-4 px-3 md:hidden">
+            <Button
+              className="w-full justify-start"
+              onClick={() => {
+                router.push('/giveaways/create');
+                setMobileOpen(false);
+              }}
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              New Giveaway
+            </Button>
+          </div>
+          
           <nav className="grid gap-1">
             {routes.map((route) => (
               <NavItem
