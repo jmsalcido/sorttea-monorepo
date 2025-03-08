@@ -229,7 +229,7 @@ export default function GiveawaysPage() {
                       filteredGiveaways.map((giveaway) => (
                         <TableRow key={giveaway.id}>
                           <TableCell className="font-medium">
-                            <Link href={`/giveaways/${giveaway.id}`} className="hover:underline">
+                            <Link href={`/giveaways/${encodeURIComponent(giveaway.id)}`} className="hover:underline">
                               {giveaway.title}
                             </Link>
                           </TableCell>
@@ -273,11 +273,11 @@ export default function GiveawaysPage() {
                               <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => router.push(`/giveaways/${giveaway.id}`)}>
+                                <DropdownMenuItem onClick={() => router.push(`/giveaways/${encodeURIComponent(giveaway.id)}`)}>
                                   <Eye className="mr-2 h-4 w-4" />
                                   View
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => router.push(`/giveaways/${giveaway.id}/edit`)}>
+                                <DropdownMenuItem onClick={() => router.push(`/giveaways/${encodeURIComponent(giveaway.id)}/edit`)}>
                                   <Edit className="mr-2 h-4 w-4" />
                                   Edit
                                 </DropdownMenuItem>

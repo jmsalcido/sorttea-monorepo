@@ -201,7 +201,24 @@ export class GiveawayService {
    * Get a single giveaway by ID
    */
   async getGiveaway(id: string): Promise<Giveaway> {
-    return this.apiClient.get<Giveaway>(`/giveaway/giveaways/${id}/`);
+    // Ensure the UUID is properly encoded for the URL
+    const encodedId = encodeURIComponent(id);
+    console.log(`Fetching giveaway with ID: ${id}, encoded as: ${encodedId}`);
+    
+    try {
+      const response = await this.apiClient.get<any>(`/giveaway/giveaways/${encodedId}/`);
+      
+      // If the response is the raw API model, transform it
+      if (!response.rules && !response.instagramSettings) {
+        console.log('Transforming raw API response to frontend model', response);
+        return this.transformGiveaway(response);
+      }
+      
+      return response;
+    } catch (error) {
+      console.error(`Error fetching giveaway ${id}:`, error);
+      throw error;
+    }
   }
 
   /**
