@@ -33,7 +33,6 @@ export function Header({ toggleMobileMenu }: HeaderProps) {
   const { data: session } = useSession();
   const { data: profile } = useUserProfile();
   const router = useRouter();
-  const [notifications] = useState<number>(3); // For demo purposes
   
   // Extract profile image URL, with fallbacks
   const profileImageUrl = 
@@ -72,14 +71,14 @@ export function Header({ toggleMobileMenu }: HeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="relative"
+            className="relative opacity-70 hover:opacity-100 transition-opacity"
+            disabled
+            title="Notifications coming soon"
           >
-            <Bell className="h-5 w-5" />
-            {notifications > 0 && (
-              <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">
-                {notifications}
-              </span>
-            )}
+            <Bell className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+            <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-[10px] font-medium text-gray-500 dark:text-gray-400">
+              0
+            </span>
             <span className="sr-only">Notifications</span>
           </Button>
         </div>
