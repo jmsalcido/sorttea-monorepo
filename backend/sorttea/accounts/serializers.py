@@ -18,8 +18,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = [
             'id', 'display_name', 'bio', 'website', 
-            'auth_provider', 'provider_user_id', 'provider_profile_url', 'last_login_provider',
-            'has_instagram_connected', 'created_at', 'updated_at'
+            'auth_provider', 'provider_user_id', 'provider_profile_url', 'provider_image_url',
+            'last_login_provider', 'has_instagram_connected', 'created_at', 'updated_at'
         ]
         read_only_fields = [
             'id', 'auth_provider', 'provider_user_id', 'provider_profile_url',

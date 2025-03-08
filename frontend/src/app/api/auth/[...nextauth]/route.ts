@@ -42,7 +42,8 @@ export const authOptions: NextAuthOptions = {
             name: user.name || '',
             provider: account.provider,
             providerId: account.providerAccountId || '',
-            accessToken: account.access_token || ''
+            accessToken: account.access_token || '',
+            profileImage: user.image || ''
           }),
         });
         

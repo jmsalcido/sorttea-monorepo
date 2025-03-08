@@ -22,6 +22,7 @@ import {
   PlusCircle 
 } from "lucide-react";
 import { getInitials } from "@/lib/utils";
+import { useUserProfile } from "@/hooks/use-user";
 
 interface HeaderProps {
   toggleMobileMenu: () => void;
@@ -29,9 +30,16 @@ interface HeaderProps {
 
 export function Header({ toggleMobileMenu }: HeaderProps) {
   const { data: session } = useSession();
+  const { data: profile } = useUserProfile();
   const router = useRouter();
   const [notifications] = useState<number>(3); // For demo purposes
   
+  // Extract profile image URL, with fallbacks
+  const profileImageUrl = 
+    profile?.profile?.provider_image_url || 
+    session?.user?.image || 
+    "";
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 px-4 md:px-6">
       <Button
@@ -79,7 +87,7 @@ export function Header({ toggleMobileMenu }: HeaderProps) {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={session?.user?.image || ""} alt={session?.user?.name || "User"} />
+                <AvatarImage src={profileImageUrl} alt={session?.user?.name || "User"} />
                 <AvatarFallback>{session?.user?.name ? getInitials(session.user.name) : "U"}</AvatarFallback>
               </Avatar>
             </Button>

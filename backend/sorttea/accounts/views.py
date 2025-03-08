@@ -56,10 +56,21 @@ class UserViewSet(viewsets.ModelViewSet):
     def update_profile(self, request):
         """Update the authenticated user's profile."""
         user = request.user
+        
+        # Extract imageUrl field if provided
+        image_url = request.data.get('imageUrl')
+        
         serializer = self.get_serializer(user, data=request.data, partial=True)
         
         if serializer.is_valid():
+            # Save the serializer data first
             serializer.save()
+            
+            # Handle imageUrl separately since it's not part of the serializer
+            if image_url is not None:
+                user.profile.provider_image_url = image_url
+                user.profile.save()
+                
             return Response(serializer.data)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -76,6 +87,7 @@ class SSORegistrationView(APIView):
         provider = request.data.get('provider')
         provider_id = request.data.get('providerId')
         access_token = request.data.get('accessToken')
+        profile_image = request.data.get('profileImage')  # Add profile image URL from provider
         
         if not email or not provider or not provider_id:
             return Response(
@@ -99,6 +111,7 @@ class SSORegistrationView(APIView):
             user.profile.auth_provider = provider
             user.profile.provider_user_id = provider_id
             user.profile.provider_profile_url = profile_url
+            user.profile.provider_image_url = profile_image  # Add profile image URL
             user.profile.last_login_provider = provider
             # Store the access token (for development purposes)
             if access_token:
@@ -136,6 +149,7 @@ class SSORegistrationView(APIView):
             profile.auth_provider = provider
             profile.provider_user_id = provider_id
             profile.provider_profile_url = profile_url
+            profile.provider_image_url = profile_image  # Add profile image URL
             profile.last_login_provider = provider
             # Store the access token (for development purposes)
             if access_token:

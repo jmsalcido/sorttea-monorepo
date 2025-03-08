@@ -9,8 +9,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
+interface InstagramConnectCTAProps {
+  showAsButton?: boolean;
+}
+
 // Remove the diagnostic types
-export function InstagramConnectCTA() {
+export function InstagramConnectCTA({ showAsButton = false }: InstagramConnectCTAProps) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { data: profile, isLoading } = useUserProfile();
@@ -52,30 +56,10 @@ export function InstagramConnectCTA() {
 
   // Don't show if profile is still loading or Instagram is already connected
   if (isLoading) {
-    return (
-      <Card className="border-dashed border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-xl flex items-center gap-2">
-            <Skeleton className="h-6 w-6 rounded-full" />
-            <Skeleton className="h-6 w-40" />
-          </CardTitle>
-          <CardDescription>
-            <Skeleton className="h-4 w-full" />
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-4 w-full mb-2" />
-          <Skeleton className="h-4 w-3/4" />
-        </CardContent>
-        <CardFooter>
-          <Skeleton className="h-9 w-36" />
-        </CardFooter>
-      </Card>
-    );
+    return showAsButton ? <Button disabled><Skeleton className="h-4 w-24" /></Button> : null;
   }
-
-  // If Instagram is already connected, don't show the CTA
-  // Check if user has Instagram connected based on instagramUsername
+  
+  // If Instagram is already connected, don't show anything
   if (profile?.instagramUsername) {
     return null;
   }
@@ -152,8 +136,28 @@ export function InstagramConnectCTA() {
 
   // Remove runTokenDiagnostics function
 
+  if (showAsButton) {
+    return (
+      <Button
+        variant="outline"
+        onClick={handleConnectInstagram}
+        disabled={isConnecting}
+        className="whitespace-nowrap"
+      >
+        {isConnecting ? (
+          "Connecting..."
+        ) : (
+          <>
+            <Instagram className="mr-2 h-4 w-4" />
+            Connect Instagram
+          </>
+        )}
+      </Button>
+    );
+  }
+
   return (
-    <Card className="border-dashed border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30">
+    <Card className="border-blue-200 dark:border-blue-800/50 bg-blue-50/50 dark:bg-blue-950/20 mb-6">
       <CardHeader className="space-y-1">
         <CardTitle className="text-xl flex items-center gap-2">
           <Instagram className="h-6 w-6 text-blue-600 dark:text-blue-400" />

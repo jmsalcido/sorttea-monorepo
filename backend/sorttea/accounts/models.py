@@ -17,6 +17,7 @@ class UserProfile(models.Model):
     auth_provider = models.CharField(max_length=50, blank=True, null=True, help_text="Authentication provider (e.g., 'google', 'facebook')")
     provider_user_id = models.CharField(max_length=255, blank=True, null=True, help_text="User ID from the authentication provider")
     provider_profile_url = models.URLField(blank=True, null=True, help_text="URL to user's profile at the provider")
+    provider_image_url = models.URLField(blank=True, null=True, help_text="URL to user's profile picture from the provider")
     last_login_provider = models.CharField(max_length=50, blank=True, null=True, help_text="Last provider used for login")
     auth_token = models.TextField(blank=True, null=True, help_text="Authentication token from provider (mainly for debugging)")
     created_at = models.DateTimeField(auto_now_add=True)

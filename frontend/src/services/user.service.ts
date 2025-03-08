@@ -2,19 +2,43 @@ import { ApiClient } from "@/lib/api";
 
 export interface UserProfile {
   id: string;
-  name: string;
+  username: string;
   email: string;
-  role: "admin" | "moderator" | "user";
+  first_name?: string;
+  last_name?: string;
+  is_staff?: boolean;
+  date_joined?: string;
+  last_login?: string;
   instagramUsername?: string;
   imageUrl?: string;
-  createdAt: string;
-  updatedAt: string;
+  profile?: {
+    id: string;
+    display_name?: string;
+    bio?: string;
+    website?: string;
+    auth_provider?: string;
+    provider_user_id?: string;
+    provider_profile_url?: string;
+    provider_image_url?: string;
+    last_login_provider?: string;
+    has_instagram_connected?: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  instagram_account?: any;
+  // Keep these for backwards compatibility with existing code
+  role?: "admin" | "moderator" | "user";
+  name?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UpdateProfileInput {
   name?: string;
   instagramUsername?: string;
   imageUrl?: string;
+  bio?: string;
+  website?: string;
 }
 
 /**
@@ -38,7 +62,27 @@ export class UserService {
    * Update user profile
    */
   async updateProfile(data: UpdateProfileInput): Promise<UserProfile> {
-    return this.apiClient.patch<UserProfile>('/accounts/users/me/', data);
+    // Format the data for the backend API
+    const formattedData: Record<string, any> = {
+      profile: {
+        // Map from frontend field names to backend field names
+        display_name: data.name,
+        bio: data.bio,
+        website: data.website
+      }
+    };
+    
+    // Keep imageUrl and instagramUsername separate as they may be handled differently
+    if (data.imageUrl !== undefined) {
+      formattedData.imageUrl = data.imageUrl;
+    }
+    
+    if (data.instagramUsername !== undefined) {
+      formattedData.instagramUsername = data.instagramUsername;
+    }
+    
+    // Use the update_profile action endpoint defined in the UserViewSet
+    return this.apiClient.patch<UserProfile>('/accounts/users/update_profile/', formattedData);
   }
 
   /**
