@@ -1,12 +1,28 @@
 import { ApiClient } from "@/lib/api";
 
+/**
+ * Interface for giveaway verification rules
+ */
 export interface GiveawayRule {
-  mustFollow: boolean;
-  mustLike: boolean;
-  mustComment: boolean;
-  mustTag: number;
+  mustFollow: boolean;  // maps to verify_follow in backend
+  mustLike: boolean;    // maps to verify_like in backend
+  mustComment: boolean; // maps to verify_comment in backend
+  mustTag: boolean;     // maps to verify_tags in backend
+  requiredTagCount: number; // maps to required_tag_count in backend
 }
 
+/**
+ * Interface for Instagram-specific settings
+ */
+export interface InstagramSettings {
+  accountToFollow: string;    // maps to instagram_account_to_follow in backend
+  postToLike: string;         // maps to instagram_post_to_like in backend
+  postToComment: string;      // maps to instagram_post_to_comment in backend
+}
+
+/**
+ * Interface for a complete giveaway
+ */
 export interface Giveaway {
   id: string;
   title: string;
@@ -14,35 +30,85 @@ export interface Giveaway {
   status: "draft" | "active" | "paused" | "ended";
   startDate: string;
   endDate: string;
+  prizeDescription: string;
+  winnerCount: number;
+  
+  // Instagram-specific fields
+  instagramSettings: InstagramSettings;
+  
+  // Verification rules
   rules: GiveawayRule;
+  
+  // Statistics
   participants: number;
+  verifiedParticipants?: number;
+  
+  // Media
   imageUrl?: string;
-  instagramPostUrl?: string;
+  
+  // Timestamps
   createdAt: string;
   updatedAt: string;
 }
 
+/**
+ * Interface for creating a new giveaway
+ */
 export interface CreateGiveawayInput {
   title: string;
   description: string;
   start_date: string;
   end_date: string;
   prize_description: string;
-  rules: GiveawayRule;
+  winner_count?: number;
+  
+  // Instagram-specific fields
+  instagram_account_to_follow?: string;
+  instagram_post_to_like?: string;
+  instagram_post_to_comment?: string;
+  required_tag_count?: number;
+  
+  // Verification rules
+  verify_follow?: boolean;
+  verify_like?: boolean;
+  verify_comment?: boolean;
+  verify_tags?: boolean;
+  
+  // Status
   status?: "draft" | "active" | "paused" | "ended";
-  instagramPostUrl?: string;
-  imageUrl?: string;
+  
+  // Media
+  image_url?: string;
 }
 
+/**
+ * Interface for updating an existing giveaway
+ */
 export interface UpdateGiveawayInput {
   title?: string;
   description?: string;
-  startDate?: string;
-  endDate?: string;
-  rules?: Partial<GiveawayRule>;
+  start_date?: string;
+  end_date?: string;
+  prize_description?: string;
+  winner_count?: number;
+  
+  // Instagram-specific fields
+  instagram_account_to_follow?: string;
+  instagram_post_to_like?: string;
+  instagram_post_to_comment?: string;
+  required_tag_count?: number;
+  
+  // Verification rules
+  verify_follow?: boolean;
+  verify_like?: boolean;
+  verify_comment?: boolean;
+  verify_tags?: boolean;
+  
+  // Status
   status?: "draft" | "active" | "paused" | "ended";
-  instagramPostUrl?: string;
-  imageUrl?: string;
+  
+  // Media
+  image_url?: string;
 }
 
 /**
@@ -103,7 +169,8 @@ export class GiveawayService {
       mustFollow: apiGiveaway.verify_follow || false,
       mustLike: apiGiveaway.verify_like || false,
       mustComment: apiGiveaway.verify_comment || false,
-      mustTag: apiGiveaway.required_tag_count || 0
+      mustTag: apiGiveaway.verify_tags || false,
+      requiredTagCount: apiGiveaway.required_tag_count || 0
     };
     
     // Return transformed giveaway
@@ -114,10 +181,17 @@ export class GiveawayService {
       status: apiGiveaway.status,
       startDate: apiGiveaway.start_date,
       endDate: apiGiveaway.end_date,
+      prizeDescription: apiGiveaway.prize_description,
+      winnerCount: apiGiveaway.winner_count || 0,
+      instagramSettings: {
+        accountToFollow: apiGiveaway.instagram_account_to_follow || '',
+        postToLike: apiGiveaway.instagram_post_to_like || '',
+        postToComment: apiGiveaway.instagram_post_to_comment || ''
+      },
       rules: rules,
       participants: apiGiveaway.entry_count || 0,
+      verifiedParticipants: apiGiveaway.verified_participants || 0,
       imageUrl: apiGiveaway.image_url,
-      instagramPostUrl: apiGiveaway.instagram_post_to_like,
       createdAt: apiGiveaway.created_at,
       updatedAt: apiGiveaway.updated_at
     };
@@ -134,14 +208,32 @@ export class GiveawayService {
    * Create a new giveaway
    */
   async createGiveaway(data: CreateGiveawayInput): Promise<Giveaway> {
-    return this.apiClient.post<Giveaway>('/giveaway/giveaways/', data);
+    console.log('Creating giveaway with data:', data);
+    
+    // Format the input data to match what the backend expects
+    const formattedData = {
+      ...data,
+      // Make sure all the fields are properly formatted for the backend
+    };
+    
+    const response = await this.apiClient.post<any>('/giveaway/giveaways/', formattedData);
+    return this.transformGiveaway(response);
   }
 
   /**
    * Update an existing giveaway
    */
   async updateGiveaway(id: string, data: UpdateGiveawayInput): Promise<Giveaway> {
-    return this.apiClient.put<Giveaway>(`/giveaway/giveaways/${id}/`, data);
+    console.log('Updating giveaway with data:', data);
+    
+    // Format the input data to match what the backend expects
+    const formattedData = {
+      ...data,
+      // Make sure all the fields are properly formatted for the backend
+    };
+    
+    const response = await this.apiClient.put<any>(`/giveaway/giveaways/${id}/`, formattedData);
+    return this.transformGiveaway(response);
   }
 
   /**

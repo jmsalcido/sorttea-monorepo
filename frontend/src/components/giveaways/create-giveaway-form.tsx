@@ -43,11 +43,15 @@ const formSchema = z.object({
   prizeDescription: z.string().min(5, "Prize description must be at least 5 characters").max(500, "Prize description must be less than 500 characters"),
   startDate: z.string().min(1, "A start date is required"),
   endDate: z.string().min(1, "An end date is required"),
+  instagramAccountToFollow: z.string().optional(),
+  instagramPostToLike: z.string().optional(),
+  instagramPostToComment: z.string().optional(),
   rules: z.object({
     mustFollow: z.boolean().default(true),
     mustLike: z.boolean().default(true),
     mustComment: z.boolean().default(false),
-    mustTag: z.number().min(0).max(10).default(0),
+    mustTag: z.boolean().default(false),
+    requiredTagCount: z.number().min(0).max(10).default(0),
     customRules: z.string().max(200, "Custom rules must be less than 200 characters").optional(),
   }),
 }).refine(
@@ -81,11 +85,15 @@ export function CreateGiveawayForm() {
     prizeDescription: "",
     startDate: todayFormatted,
     endDate: oneWeekLaterFormatted,
+    instagramAccountToFollow: userProfile?.instagramUsername || "",
+    instagramPostToLike: "",
+    instagramPostToComment: "",
     rules: {
       mustFollow: true,
       mustLike: true,
       mustComment: false,
-      mustTag: 0,
+      mustTag: false,
+      requiredTagCount: 0,
       customRules: "",
     },
   };
@@ -106,14 +114,26 @@ export function CreateGiveawayForm() {
     setIsSubmitting(true);
 
     try {
-      // Create giveaway with the specified status, transforming field names to match the backend
+      // Create giveaway with the specified status, properly mapping fields to match the backend
       await createGiveaway.mutateAsync({
         title: data.title,
         description: data.description,
         start_date: data.startDate,
         end_date: data.endDate,
         prize_description: data.prizeDescription,
-        rules: data.rules,
+        
+        // Instagram-specific fields
+        instagram_account_to_follow: data.instagramAccountToFollow,
+        instagram_post_to_like: data.instagramPostToLike,
+        instagram_post_to_comment: data.instagramPostToComment,
+        
+        // Map rules directly to backend fields
+        verify_follow: data.rules.mustFollow,
+        verify_like: data.rules.mustLike,
+        verify_comment: data.rules.mustComment,
+        verify_tags: data.rules.mustTag,
+        required_tag_count: data.rules.requiredTagCount,
+        
         status: status,
       });
 
@@ -272,6 +292,77 @@ export function CreateGiveawayForm() {
               />
             </div>
 
+            <div className="space-y-4 border rounded-md p-4 bg-gray-50 dark:bg-gray-900">
+              <h3 className="text-lg font-medium flex items-center">
+                <Instagram className="mr-2 h-5 w-5" />
+                Instagram Settings
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Configure the Instagram-specific details for your giveaway
+              </p>
+
+              <FormField
+                control={form.control}
+                name="instagramAccountToFollow"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Instagram Account to Follow</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Your Instagram username" 
+                        {...field} 
+                        value={field.value || userProfile?.instagramUsername || ""}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      The Instagram account participants must follow (usually your account)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="instagramPostToLike"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Instagram Post URL to Like</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="https://www.instagram.com/p/post-id/" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      URL of the Instagram post participants must like
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="instagramPostToComment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Instagram Post URL to Comment</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="https://www.instagram.com/p/post-id/" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      URL of the Instagram post participants must comment on (usually the same as the like post)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Participation Rules</h3>
               <p className="text-sm text-muted-foreground">
@@ -346,8 +437,29 @@ export function CreateGiveawayForm() {
                   control={form.control}
                   name="rules.mustTag"
                   render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Must Tag Friends</FormLabel>
+                        <FormDescription>
+                          Participants must tag friends in their comment
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="rules.requiredTagCount"
+                  render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tag Friends</FormLabel>
+                      <FormLabel>Number of Required Tags</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -356,10 +468,11 @@ export function CreateGiveawayForm() {
                           value={field.value.toString()}
                           onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                           onBlur={field.onBlur}
+                          disabled={!form.getValues("rules.mustTag")}
                         />
                       </FormControl>
                       <FormDescription>
-                        Number of friends participants must tag (0 for none, max 10)
+                        Number of friends participants must tag (0-10)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
