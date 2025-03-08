@@ -26,9 +26,10 @@ interface NavItemProps {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   isActive: boolean;
+  setMobileOpen?: (isOpen: boolean) => void;
 }
 
-const NavItem = ({ href, icon: Icon, title, isActive }: NavItemProps) => (
+const NavItem = ({ href, icon: Icon, title, isActive, setMobileOpen }: NavItemProps) => (
   <Link
     href={href}
     className={cn(
@@ -37,6 +38,7 @@ const NavItem = ({ href, icon: Icon, title, isActive }: NavItemProps) => (
         ? "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400" 
         : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
     )}
+    onClick={() => setMobileOpen && setMobileOpen(false)}
   >
     <Icon className={cn("h-5 w-5", isActive ? "text-blue-600 dark:text-blue-400" : "")} />
     {title}
@@ -130,6 +132,7 @@ export function Sidebar({ isMobileOpen, setMobileOpen }: SidebarProps) {
                 icon={route.icon}
                 title={route.title}
                 isActive={pathname === route.href || pathname.startsWith(`${route.href}/`)}
+                setMobileOpen={setMobileOpen}
               />
             ))}
           </nav>
@@ -140,6 +143,7 @@ export function Sidebar({ isMobileOpen, setMobileOpen }: SidebarProps) {
             <Link
               href="/help"
               className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
+              onClick={() => setMobileOpen(false)}
             >
               <HelpCircle className="h-5 w-5" />
               Help & Support
