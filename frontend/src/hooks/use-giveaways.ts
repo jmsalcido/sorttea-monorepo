@@ -148,4 +148,106 @@ export function useGiveawayAnalytics(giveawayId: string) {
     queryFn: () => giveawayService.getAnalytics(giveawayId),
     enabled: !!giveawayId, // Only run the query if a giveaway ID is provided
   });
+}
+
+/**
+ * Hook for fetching upcoming giveaways (starting in the next 7 days)
+ */
+export function useUpcomingGiveaways(limit: number = 5) {
+  return useQuery({
+    queryKey: ["upcomingGiveaways", limit],
+    queryFn: async () => {
+      try {
+        // First check if the API is reachable
+        try {
+          await giveawayService.apiClient.checkHealth();
+          console.log('API is reachable, proceeding with upcoming giveaways request');
+        } catch (healthError) {
+          console.error('API health check failed, still attempting upcoming giveaways request:', healthError);
+        }
+        
+        // Make separate requests for each status
+        // Get draft giveaways
+        const draftGiveawaysPromise = giveawayService.getGiveaways({ 
+          status: 'draft',
+          limit: 50 // Get a reasonable number to filter from
+        });
+        
+        // Get active giveaways
+        const activeGiveawaysPromise = giveawayService.getGiveaways({ 
+          status: 'active',
+          limit: 50 // Get a reasonable number to filter from
+        });
+        
+        // Get paused giveaways
+        const pausedGiveawaysPromise = giveawayService.getGiveaways({ 
+          status: 'paused',
+          limit: 50 // Get a reasonable number to filter from
+        });
+        
+        // Wait for all requests to complete
+        const [draftGiveaways, activeGiveaways, pausedGiveaways] = await Promise.all([
+          draftGiveawaysPromise,
+          activeGiveawaysPromise,
+          pausedGiveawaysPromise
+        ]);
+        
+        // Combine the results
+        const allGiveaways = [
+          ...(draftGiveaways.giveaways || []),
+          ...(activeGiveaways.giveaways || []),
+          ...(pausedGiveaways.giveaways || [])
+        ];
+        
+        console.log(`Found ${draftGiveaways.giveaways?.length || 0} draft, ${activeGiveaways.giveaways?.length || 0} active, and ${pausedGiveaways.giveaways?.length || 0} paused giveaways`);
+        
+        // Debug giveaway dates
+        if (allGiveaways.length > 0) {
+          console.log('Sample giveaway dates:');
+          allGiveaways.slice(0, 3).forEach((giveaway, index) => {
+            console.log(`Giveaway ${index + 1}: '${giveaway.title}', startDate = '${giveaway.startDate}', parsed = ${new Date(giveaway.startDate).toISOString()}`);
+          });
+        }
+        
+        // Calculate the date range (next 7 days)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Start of today
+        
+        const nextWeek = new Date(today);
+        nextWeek.setDate(today.getDate() + 7); // 7 days from now
+        nextWeek.setHours(23, 59, 59, 999); // End of the 7th day
+        
+        console.log(`Date filter range: ${today.toISOString()} to ${nextWeek.toISOString()}`);
+        
+        // Filter giveaways to those starting in the next 7 days (or already started but still running)
+        const upcomingGiveaways = allGiveaways.filter(giveaway => {
+          const startDate = new Date(giveaway.startDate);
+          // Include if start date is between today and next week
+          const isUpcoming = startDate >= today && startDate <= nextWeek;
+          if (isUpcoming) {
+            console.log(`Found upcoming giveaway: '${giveaway.title}', startDate = ${startDate.toISOString()}`);
+          }
+          return isUpcoming;
+        });
+        
+        console.log(`Filtered to ${upcomingGiveaways.length} giveaways starting in the next 7 days`);
+        
+        // Sort by start date (closest first)
+        upcomingGiveaways.sort((a, b) => {
+          return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        });
+        
+        // Limit the results
+        const limitedResults = upcomingGiveaways.slice(0, limit);
+        
+        return {
+          giveaways: limitedResults,
+          total: upcomingGiveaways.length
+        };
+      } catch (error) {
+        console.error('Failed to fetch upcoming giveaways:', error);
+        throw error;
+      }
+    },
+  });
 } 
