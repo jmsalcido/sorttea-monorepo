@@ -59,9 +59,105 @@ export default function LandingPage() {
               <Button variant="outline" size="lg" className="w-full sm:w-auto border-gray-300 dark:border-gray-700 shadow-sm">Learn More</Button>
             </Link>
           </div>
-          <div className="w-full max-w-4xl aspect-video overflow-hidden rounded-xl border bg-white dark:bg-gray-800 shadow-lg">
-            <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-              <p className="text-gray-500 dark:text-gray-400">Dashboard Preview</p>
+          <div className="w-full max-w-4xl overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-xl transform hover:rotate-0 hover:scale-[1.01] transition-all duration-300" style={{ perspective: '1000px', transform: 'rotateX(2deg)' }}>
+            {/* Browser UI */}
+            <div className="h-9 bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center px-4">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              </div>
+              <div className="mx-auto max-w-md w-full h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center px-3 text-xs text-gray-500 dark:text-gray-400">
+                app.sorttea.io/dashboard
+              </div>
+            </div>
+            
+            {/* Dashboard mockup */}
+            <div className="relative w-full aspect-video bg-white dark:bg-gray-800">
+              {/* Header */}
+              <div className="absolute top-0 left-0 right-0 h-12 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex items-center px-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-md bg-blue-600 dark:bg-blue-500"></div>
+                  <div className="w-28 h-5 bg-blue-600 dark:bg-blue-500 rounded-md"></div>
+                </div>
+                <div className="ml-auto flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-sm bg-blue-600 dark:bg-blue-400"></div>
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                    <div className="w-5 h-5 rounded-sm bg-gray-400 dark:bg-gray-500 translate-y-1"></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Sidebar */}
+              <div className="absolute top-12 left-0 bottom-0 w-48 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 px-3 py-4">
+                <div className="space-y-3">
+                  <div className="w-full h-8 bg-blue-100 dark:bg-blue-900/30 rounded-md flex items-center px-2">
+                    <div className="w-4 h-4 rounded-full bg-blue-600 dark:bg-blue-400 mr-2"></div>
+                    <div className="w-20 h-4 bg-blue-600 dark:bg-blue-400 rounded-sm"></div>
+                  </div>
+                  <div className="w-full h-8 bg-gray-200 dark:bg-gray-800 rounded-md flex items-center px-2">
+                    <div className="w-4 h-4 rounded-full bg-gray-400 dark:bg-gray-600 mr-2"></div>
+                    <div className="w-24 h-4 bg-gray-400 dark:bg-gray-600 rounded-sm"></div>
+                  </div>
+                  <div className="w-full h-8 bg-gray-200 dark:bg-gray-800 rounded-md flex items-center px-2">
+                    <div className="w-4 h-4 rounded-full bg-gray-400 dark:bg-gray-600 mr-2"></div>
+                    <div className="w-16 h-4 bg-gray-400 dark:bg-gray-600 rounded-sm"></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Main content */}
+              <div className="absolute top-12 left-48 right-0 bottom-0 bg-gray-100 dark:bg-gray-800 p-4 overflow-hidden">
+                {/* Stats cards */}
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                          <div className="w-16 h-3 bg-gray-300 dark:bg-gray-700 rounded-sm"></div>
+                          <div className="w-12 h-5 bg-gray-800 dark:bg-gray-100 rounded-sm"></div>
+                        </div>
+                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                          <div className="w-4 h-4 rounded-sm bg-blue-600 dark:bg-blue-400"></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Chart */}
+                <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4 shadow-sm">
+                  <div className="mb-2 w-24 h-4 bg-gray-800 dark:bg-gray-100 rounded-sm"></div>
+                  <div className="h-32 w-full flex items-end justify-between px-4 pt-6 border-b border-l border-gray-200 dark:border-gray-700">
+                    {[...Array(12)].map((_, i) => (
+                      <div key={i} className="w-6 bg-blue-500 dark:bg-blue-400 rounded-t-sm" style={{ height: `${20 + Math.random() * 70}%` }}></div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Table */}
+                <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                  <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <div className="w-48 h-4 bg-gray-800 dark:bg-gray-100 rounded-sm"></div>
+                  </div>
+                  <div className="p-2">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="flex items-center gap-3 p-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                        <div className="space-y-1 flex-1">
+                          <div className="w-32 h-3 bg-gray-800 dark:bg-gray-100 rounded-sm"></div>
+                          <div className="w-48 h-2 bg-gray-300 dark:bg-gray-700 rounded-sm"></div>
+                        </div>
+                        <div className="w-16 h-6 rounded-full bg-green-100 dark:bg-green-900/30">
+                          <div className="w-10 h-2 mx-auto mt-2 bg-green-500 dark:bg-green-400 rounded-sm"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
