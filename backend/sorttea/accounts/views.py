@@ -100,6 +100,9 @@ class SSORegistrationView(APIView):
             user.profile.provider_user_id = provider_id
             user.profile.provider_profile_url = profile_url
             user.profile.last_login_provider = provider
+            # Store the access token (for development purposes)
+            if access_token:
+                user.profile.auth_token = access_token
             user.profile.save()
             
             logger.info(f"Updated provider information for user {user.username}")
@@ -134,6 +137,9 @@ class SSORegistrationView(APIView):
             profile.provider_user_id = provider_id
             profile.provider_profile_url = profile_url
             profile.last_login_provider = provider
+            # Store the access token (for development purposes)
+            if access_token:
+                profile.auth_token = access_token
             profile.save()
             
             logger.info(f"Created new user from SSO: {email} via {provider}")

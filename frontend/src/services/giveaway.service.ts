@@ -49,7 +49,7 @@ export interface UpdateGiveawayInput {
  * Service for interacting with giveaway-related endpoints
  */
 export class GiveawayService {
-  private apiClient: ApiClient;
+  public apiClient: ApiClient;
   
   constructor() {
     this.apiClient = new ApiClient();

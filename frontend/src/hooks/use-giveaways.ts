@@ -10,7 +10,31 @@ const giveawayService = new GiveawayService();
 export function useGiveaways(params?: { status?: string; limit?: number; page?: number }) {
   return useQuery({
     queryKey: ["giveaways", params],
-    queryFn: () => giveawayService.getGiveaways(params),
+    queryFn: async () => {
+      try {
+        // First check if the API is reachable
+        try {
+          await giveawayService.apiClient.checkHealth();
+          console.log('API is reachable, proceeding with giveaways request');
+        } catch (healthError) {
+          console.error('API health check failed, still attempting giveaways request:', healthError);
+        }
+        
+        return await giveawayService.getGiveaways(params);
+      } catch (error) {
+        console.error('Failed to fetch giveaways:', error);
+        
+        // Check authentication status
+        try {
+          const session = await import('next-auth/react').then(mod => mod.getSession());
+          console.log('Current session:', session ? 'Active' : 'None', session);
+        } catch (sessionError) {
+          console.error('Error checking session:', sessionError);
+        }
+        
+        throw error;
+      }
+    },
   });
 }
 
