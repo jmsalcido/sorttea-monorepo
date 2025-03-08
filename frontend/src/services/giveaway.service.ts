@@ -28,6 +28,7 @@ export interface CreateGiveawayInput {
   startDate: string;
   endDate: string;
   rules: GiveawayRule;
+  status?: "draft" | "scheduled" | "active" | "completed";
   instagramPostUrl?: string;
   imageUrl?: string;
 }
