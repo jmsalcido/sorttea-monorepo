@@ -58,7 +58,7 @@ export class AnalyticsService {
   /**
    * Get timeseries data for charts
    */
-  async getTimeseriesData(period?: AnalyticsPeriod): Promise<TimeseriesData[]> {
+  async getTimeseriesData(period?: AnalyticsPeriod, useMockData: boolean = false): Promise<TimeseriesData[]> {
     const queryParams: Record<string, string> = {};
     
     if (period?.startDate) {
@@ -67,6 +67,11 @@ export class AnalyticsService {
     
     if (period?.endDate) {
       queryParams.endDate = period.endDate;
+    }
+    
+    // Add mock data parameter if requested
+    if (useMockData && process.env.NODE_ENV === 'development') {
+      queryParams.mock = 'true';
     }
     
     return this.apiClient.get<TimeseriesData[]>('/analytics/timeseries/', queryParams);

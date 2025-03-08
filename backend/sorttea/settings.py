@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'sorttea.giveaway',
     'sorttea.instagram',
     'sorttea.accounts',
+    'sorttea.analytics',
 ]
 
 MIDDLEWARE = [

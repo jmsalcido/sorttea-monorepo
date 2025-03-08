@@ -40,6 +40,7 @@ urlpatterns = [
     path('api/v1/instagram/', include('sorttea.instagram.urls')),
     path('api/v1/giveaway/', include('sorttea.giveaway.urls')),
     path('api/v1/accounts/', include('sorttea.accounts.urls')),
+    path('api/v1/analytics/', include('sorttea.analytics.urls')),
     
     # Swagger documentation
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),

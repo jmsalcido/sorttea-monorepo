@@ -17,10 +17,10 @@ export function useOverviewStats(period?: AnalyticsPeriod) {
 /**
  * Hook for fetching timeseries data
  */
-export function useTimeseriesData(period?: AnalyticsPeriod) {
+export function useTimeseriesData(period?: AnalyticsPeriod, useMockData: boolean = false) {
   return useQuery({
-    queryKey: ["analytics", "timeseries", period],
-    queryFn: () => analyticsService.getTimeseriesData(period),
+    queryKey: ["analytics", "timeseries", period, useMockData],
+    queryFn: () => analyticsService.getTimeseriesData(period, useMockData),
   });
 }
 
