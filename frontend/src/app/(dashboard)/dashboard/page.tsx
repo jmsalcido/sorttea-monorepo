@@ -16,6 +16,7 @@ import { useGiveaways } from "@/hooks/use-giveaways";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMemo } from "react";
 import Link from "next/link";
+import { InstagramConnectCTA } from "@/components/dashboard/instagram-connect-cta";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -68,6 +69,9 @@ export default function DashboardPage() {
           Here's what's happening with your giveaways today.
         </p>
       </div>
+      
+      {/* Instagram Connect CTA */}
+      <InstagramConnectCTA />
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
