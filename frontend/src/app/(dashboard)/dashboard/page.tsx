@@ -38,6 +38,7 @@ import {
   TooltipProps
 } from "recharts";
 import { TimeseriesData } from "@/services/analytics.service";
+import { useUserProfile } from "@/hooks/use-user";
 
 // Extended TimeseriesData with completionRate
 interface ExtendedTimeseriesData extends TimeseriesData {
@@ -99,6 +100,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const { data: profile } = useUserProfile();
   
   // Debug state for using mock data (only shown in development)
   const [useMockData, setUseMockData] = useState(false);
@@ -173,7 +175,7 @@ export default function DashboardPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Welcome back, {session?.user?.name?.split(' ')[0] || 'User'}
+              Welcome back, {profile?.profile?.display_name || session?.user?.name?.split(' ')[0] || session?.user?.email?.split('@')[0] || 'User'}
             </h1>
             <p className="text-muted-foreground mt-1">
               Here's what's happening with your giveaways today.

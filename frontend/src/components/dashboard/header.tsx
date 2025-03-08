@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { getInitials } from "@/lib/utils";
 import { useUserProfile } from "@/hooks/use-user";
+import Link from "next/link";
 
 interface HeaderProps {
   toggleMobileMenu: () => void;
@@ -95,14 +96,18 @@ export function Header({ toggleMobileMenu }: HeaderProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </DropdownMenuItem>
+            <Link href="/settings" className="w-full">
+              <DropdownMenuItem>
+                <User className="mr-2 h-4 w-4" />
+                Profile
+              </DropdownMenuItem>
+            </Link>
+            <Link href="/settings" className="w-full">
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/auth/signin" })}>
               <LogOut className="mr-2 h-4 w-4" />
