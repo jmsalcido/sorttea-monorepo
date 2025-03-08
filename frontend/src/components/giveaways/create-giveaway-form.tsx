@@ -40,6 +40,7 @@ import { cn } from "@/lib/utils";
 const formSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters").max(100, "Title must be less than 100 characters"),
   description: z.string().min(10, "Description must be at least 10 characters").max(500, "Description must be less than 500 characters"),
+  prizeDescription: z.string().min(5, "Prize description must be at least 5 characters").max(500, "Prize description must be less than 500 characters"),
   startDate: z.string().min(1, "A start date is required"),
   endDate: z.string().min(1, "An end date is required"),
   rules: z.object({
@@ -77,6 +78,7 @@ export function CreateGiveawayForm() {
   const defaultValues: FormData = {
     title: "",
     description: "",
+    prizeDescription: "",
     startDate: todayFormatted,
     endDate: oneWeekLaterFormatted,
     rules: {
@@ -94,31 +96,46 @@ export function CreateGiveawayForm() {
     defaultValues,
   });
 
-  // Handle form submission
-  const onSubmit = async (data: FormData) => {
-    if (!userProfile?.instagramUsername) {
-      toast.error("You must connect your Instagram account before creating a giveaway");
+  // Handle form submission with specified status
+  const onSubmit = async (data: FormData, status: "draft" | "active" | "paused" | "ended" = "draft") => {
+    if (status !== "draft" && !userProfile?.instagramUsername) {
+      toast.error("You must connect your Instagram account before launching a giveaway");
       return;
     }
     
     setIsSubmitting(true);
 
     try {
-      // Create giveaway in draft state
+      // Create giveaway with the specified status, transforming field names to match the backend
       await createGiveaway.mutateAsync({
         title: data.title,
         description: data.description,
-        startDate: data.startDate,
-        endDate: data.endDate,
+        start_date: data.startDate,
+        end_date: data.endDate,
+        prize_description: data.prizeDescription,
         rules: data.rules,
-        status: "draft", // Always create as draft initially
+        status: status,
       });
 
-      toast.success("Giveaway created successfully!");
+      // Update success message based on status
+      let statusMessage = "created successfully";
+      if (status === "draft") {
+        statusMessage = "saved as draft";
+      } else if (status === "active") {
+        statusMessage = "launched successfully";
+      }
+      
+      toast.success(`Giveaway ${statusMessage}!`);
       router.push("/giveaways");
     } catch (error) {
-      console.error("Error creating giveaway:", error);
-      toast.error("Failed to create giveaway. Please try again.");
+      console.error(`Error creating giveaway with status ${status}:`, error);
+      
+      // Improved error handling to show the specific error from the backend
+      if (error instanceof Error) {
+        toast.error(`Failed to create giveaway: ${error.message}`);
+      } else {
+        toast.error("Failed to create giveaway. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -147,7 +164,7 @@ export function CreateGiveawayForm() {
         )}
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit((data) => onSubmit(data, "draft"))} className="space-y-6">
             <FormField
               control={form.control}
               name="title"
@@ -173,13 +190,34 @@ export function CreateGiveawayForm() {
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe your giveaway and what prizes are offered"
+                      placeholder="Describe your giveaway"
                       className="min-h-32 resize-y"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    Provide details about the prizes and why people should participate
+                    Provide details about the giveaway and why people should participate
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="prizeDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Prize Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe the prizes in detail"
+                      className="min-h-24 resize-y"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Clearly describe what participants can win
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -363,7 +401,7 @@ export function CreateGiveawayForm() {
         </Button>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <Button
-            onClick={form.handleSubmit(onSubmit)}
+            onClick={form.handleSubmit((data) => onSubmit(data, "draft"))}
             disabled={isSubmitting}
             className="w-full sm:w-auto"
           >
@@ -375,8 +413,7 @@ export function CreateGiveawayForm() {
                 toast.error("You must connect Instagram before launching a giveaway");
                 return;
               }
-              // Would normally launch directly
-              form.handleSubmit(onSubmit)();
+              form.handleSubmit((data) => onSubmit(data, "active"))();
             }}
             disabled={isSubmitting || !hasInstagram}
             className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 w-full sm:w-auto"

@@ -11,7 +11,7 @@ export interface Giveaway {
   id: string;
   title: string;
   description: string;
-  status: "draft" | "scheduled" | "active" | "completed";
+  status: "draft" | "active" | "paused" | "ended";
   startDate: string;
   endDate: string;
   rules: GiveawayRule;
@@ -25,10 +25,11 @@ export interface Giveaway {
 export interface CreateGiveawayInput {
   title: string;
   description: string;
-  startDate: string;
-  endDate: string;
+  start_date: string;
+  end_date: string;
+  prize_description: string;
   rules: GiveawayRule;
-  status?: "draft" | "scheduled" | "active" | "completed";
+  status?: "draft" | "active" | "paused" | "ended";
   instagramPostUrl?: string;
   imageUrl?: string;
 }
@@ -39,7 +40,7 @@ export interface UpdateGiveawayInput {
   startDate?: string;
   endDate?: string;
   rules?: Partial<GiveawayRule>;
-  status?: "draft" | "scheduled" | "active" | "completed";
+  status?: "draft" | "active" | "paused" | "ended";
   instagramPostUrl?: string;
   imageUrl?: string;
 }
@@ -72,7 +73,54 @@ export class GiveawayService {
       queryParams.page = params.page.toString();
     }
     
-    return this.apiClient.get<{ giveaways: Giveaway[]; total: number }>('/giveaway/giveaways/', queryParams);
+    // Log API request
+    console.log('Fetching giveaways with params:', queryParams);
+    
+    const response = await this.apiClient.get<any>('/giveaway/giveaways/', queryParams);
+    
+    // Log raw API response
+    console.log('Raw API response:', JSON.stringify(response, null, 2));
+    
+    // If the response doesn't match the expected structure, transform it
+    if (!response.giveaways && Array.isArray(response.results)) {
+      console.log('Transforming response format');
+      return {
+        giveaways: response.results.map((item: any) => this.transformGiveaway(item)),
+        total: response.count || response.results.length
+      };
+    }
+    
+    return response;
+  }
+
+  // Helper method to transform API response to expected format
+  private transformGiveaway(apiGiveaway: any): Giveaway {
+    // Log the transformation
+    console.log('Transforming giveaway:', apiGiveaway);
+    
+    // Extract rules from API response or create default
+    const rules: GiveawayRule = {
+      mustFollow: apiGiveaway.verify_follow || false,
+      mustLike: apiGiveaway.verify_like || false,
+      mustComment: apiGiveaway.verify_comment || false,
+      mustTag: apiGiveaway.required_tag_count || 0
+    };
+    
+    // Return transformed giveaway
+    return {
+      id: apiGiveaway.id,
+      title: apiGiveaway.title,
+      description: apiGiveaway.description,
+      status: apiGiveaway.status,
+      startDate: apiGiveaway.start_date,
+      endDate: apiGiveaway.end_date,
+      rules: rules,
+      participants: apiGiveaway.entry_count || 0,
+      imageUrl: apiGiveaway.image_url,
+      instagramPostUrl: apiGiveaway.instagram_post_to_like,
+      createdAt: apiGiveaway.created_at,
+      updatedAt: apiGiveaway.updated_at
+    };
   }
 
   /**
