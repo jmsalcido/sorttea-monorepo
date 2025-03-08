@@ -279,7 +279,7 @@ export default function LandingPage() {
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
               <div className="inline-block rounded-lg bg-blue-100 dark:bg-blue-900/50 px-3 py-1 text-sm text-blue-600 dark:text-blue-300">
-                Pricing
+                Pricing 💰
               </div>
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                 Simple, Transparent Pricing
@@ -289,43 +289,34 @@ export default function LandingPage() {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 max-w-3xl mx-auto">
             {[
               {
-                title: "Starter",
-                price: "$29",
-                description: "Perfect for individuals and small businesses.",
+                title: "Free 🆓",
+                price: "$0",
+                description: "Perfect for beginners and casual users.",
                 features: [
-                  "5 giveaways per month",
-                  "1,000 entry verifications",
-                  "Basic analytics",
-                  "Email support"
+                  "1 giveaway per month 🎁",
+                  "Up to 50 participants 👥",
+                  "Pay $2 for unlimited participants 💯",
+                  "Pay $2 for additional giveaways ➕",
+                  "Basic analytics 📊",
+                  "Includes ads 📱"
                 ]
               },
               {
-                title: "Professional",
-                price: "$79",
-                description: "Ideal for growing businesses and influencers.",
+                title: "Premium ⭐",
+                price: "$10",
+                description: "For businesses and influencers who run regular giveaways.",
                 features: [
-                  "Up to 20 giveaways per month",
-                  "10,000 entry verifications",
-                  "Advanced analytics",
-                  "Priority support",
-                  "Custom rules"
+                  "Unlimited giveaways 🎁 🎁 🎁",
+                  "Unlimited participants 👥 👥 👥",
+                  "Advanced analytics 📈",
+                  "Priority support 🛎️",
+                  "No ads ✨",
+                  "Custom rules ⚙️"
                 ],
                 highlighted: true
-              },
-              {
-                title: "Enterprise",
-                price: "Custom",
-                description: "For large businesses with custom needs.",
-                features: [
-                  "Unlimited giveaways",
-                  "Unlimited verifications",
-                  "Custom integrations",
-                  "Dedicated account manager",
-                  "API access"
-                ]
               }
             ].map((plan, i) => (
               <div 
@@ -340,7 +331,7 @@ export default function LandingPage() {
                   <h3 className="text-2xl font-bold">{plan.title}</h3>
                   <div className="flex items-baseline gap-1">
                     <span className="text-3xl font-bold">{plan.price}</span>
-                    {plan.price !== "Custom" && <span className="text-gray-500 dark:text-gray-400">/month</span>}
+                    {plan.price !== "$0" && <span className="text-gray-500 dark:text-gray-400">/month</span>}
                   </div>
                   <p className="text-gray-500 dark:text-gray-400">{plan.description}</p>
                 </div>
@@ -371,7 +362,7 @@ export default function LandingPage() {
                       className="w-full shadow-sm" 
                       variant={plan.highlighted ? "default" : "outline"}
                     >
-                      Get Started
+                      {plan.price === "$0" ? "Get Started Free 🚀" : "Subscribe Now ✨"}
                     </Button>
                   </Link>
                 </div>
