@@ -58,11 +58,12 @@ export function Sidebar({ isMobileOpen, setMobileOpen }: SidebarProps) {
       icon: Gift,
       title: "Giveaways",
     },
-    {
-      href: "/analytics",
-      icon: BarChart3,
-      title: "Analytics",
-    },
+    // Analytics page hidden temporarily
+    // {
+    //   href: "/analytics",
+    //   icon: BarChart3,
+    //   title: "Analytics",
+    // },
     {
       href: "/participants",
       icon: Users,
