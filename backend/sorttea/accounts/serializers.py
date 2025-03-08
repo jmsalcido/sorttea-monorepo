@@ -18,9 +18,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = [
             'id', 'display_name', 'bio', 'website', 
+            'auth_provider', 'provider_user_id', 'provider_profile_url', 'last_login_provider',
             'has_instagram_connected', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'has_instagram_connected', 'created_at', 'updated_at']
+        read_only_fields = [
+            'id', 'auth_provider', 'provider_user_id', 'provider_profile_url',
+            'last_login_provider', 'has_instagram_connected', 'created_at', 'updated_at'
+        ]
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -66,6 +70,7 @@ class UserSerializer(serializers.ModelSerializer):
             profile.display_name = profile_data.get('display_name', profile.display_name)
             profile.bio = profile_data.get('bio', profile.bio)
             profile.website = profile_data.get('website', profile.website)
+            # Don't allow updating provider info through the general API
             profile.save()
             
         return instance 
