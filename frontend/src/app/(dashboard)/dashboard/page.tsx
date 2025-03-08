@@ -101,7 +101,7 @@ export default function DashboardPage() {
   const { data: session } = useSession();
   
   // Debug state for using mock data (only shown in development)
-  const [useMockData, setUseMockData] = useState(false);
+  const [useMockData, setUseMockData] = useState(true);
   const isDevelopment = process.env.NODE_ENV === 'development';
   
   // Fetch overview statistics
@@ -329,8 +329,8 @@ export default function DashboardPage() {
       </div>
       
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="lg:col-span-4 hover:shadow-md transition-all overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border-b border-gray-100 dark:border-gray-800">
+        <Card className="lg:col-span-4 hover:shadow-md transition-all overflow-hidden p-0">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border-b-0 pb-3 pt-4 px-4 m-0">
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
@@ -352,18 +352,20 @@ export default function DashboardPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-0 pt-4">
-            {statsLoading || timeseriesLoading ? (
+          {statsLoading || timeseriesLoading ? (
+            <CardContent className="p-0">
               <Skeleton className="h-[270px] w-full" />
-            ) : activityData.length === 0 ? (
-              <div className="h-[270px] w-full flex flex-col items-center justify-center">
-                <Activity className="h-16 w-16 text-gray-200 dark:text-gray-700 mb-4" />
-                <p className="text-gray-500 dark:text-gray-400">No activity data available yet</p>
-                <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-                  Start a giveaway to collect engagement data
-                </p>
-              </div>
-            ) : (
+            </CardContent>
+          ) : activityData.length === 0 ? (
+            <div className="h-[270px] w-full flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-purple-50/30 dark:from-blue-950/30 dark:to-purple-950/10">
+              <Activity className="h-16 w-16 text-blue-200 dark:text-blue-800/40 mb-4" />
+              <p className="text-gray-500 dark:text-gray-400 font-medium">No activity data available yet</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+                Start a giveaway to collect engagement data
+              </p>
+            </div>
+          ) : (
+            <CardContent className="p-4 pt-4">
               <div className="h-[270px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
@@ -432,8 +434,8 @@ export default function DashboardPage() {
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            )}
-          </CardContent>
+            </CardContent>
+          )}
           
           <div className="border-t border-gray-100 dark:border-gray-800 pt-3 pb-4 px-6 bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-950/20 dark:to-purple-950/20">
             <div className="grid grid-cols-3 gap-4">
@@ -459,186 +461,217 @@ export default function DashboardPage() {
           </div>
         </Card>
         
-        <Card className="lg:col-span-3 hover:shadow-md transition-all overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950/30 dark:to-teal-950/30 border-b border-gray-100 dark:border-gray-800">
-            <div className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-emerald-500" />
-                  Upcoming Giveaways
-                </CardTitle>
-                <CardDescription>
-                  {upcomingGiveawaysData && upcomingGiveawaysData.total ? 
-                    `${upcomingGiveawaysData.total} giveaway${upcomingGiveawaysData.total !== 1 ? 's' : ''} scheduled in the next 7 days` :
-                    'Giveaways starting in the next 7 days'
-                  }
-                </CardDescription>
-              </div>
-              {upcomingGiveawaysData && upcomingGiveawaysData.total > 0 && (
-                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
-                  {upcomingGiveawaysData.total} upcoming
-                </Badge>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent className="pt-4">
-            {upcomingGiveawaysLoading ? (
-              <div className="space-y-4">
-                {[...Array(2)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <Skeleton className="h-10 w-10 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-[200px]" />
-                      <Skeleton className="h-3 w-[150px]" />
-                    </div>
+        <Card className="lg:col-span-3 hover:shadow-md transition-all overflow-hidden p-0">
+          {upcomingGiveawaysData?.giveaways?.length === 0 ? (
+            // For empty state, use a single continuous div with background gradient
+            <div className="flex flex-col">
+              <div className="bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950/30 dark:to-teal-950/30 px-4 pt-4 pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="flex items-center gap-2 text-lg font-semibold">
+                      <Calendar className="h-5 w-5 text-emerald-500" />
+                      Upcoming Giveaways
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Giveaways starting in the next 7 days
+                    </p>
                   </div>
-                ))}
+                </div>
               </div>
-            ) : upcomingGiveawaysError ? (
-              <div className="text-sm text-red-500 dark:text-red-400 text-center py-6">
-                Error loading upcoming giveaways: {upcomingGiveawaysErrorData instanceof Error ? upcomingGiveawaysErrorData.message : 'Unknown error'}
-              </div>
-            ) : !upcomingGiveawaysData?.giveaways ? (
-              <div className="text-sm text-gray-500 dark:text-gray-400 text-center py-6">
-                No giveaway data available. Please try again later.
-              </div>
-            ) : upcomingGiveawaysData.giveaways.length > 0 ? (
-              <div className="space-y-3">
-                {upcomingGiveawaysData.giveaways.map((giveaway) => {
-                  // Calculate days until giveaway starts
-                  const startDate = new Date(giveaway.startDate);
-                  const today = new Date();
-                  const diffTime = startDate.getTime() - today.getTime();
-                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                  
-                  let startLabel;
-                  let timeColor;
-                  if (diffDays <= 0) {
-                    startLabel = "Starting today!";
-                    timeColor = "text-red-500 dark:text-red-400";
-                  } else if (diffDays === 1) {
-                    startLabel = "Starting tomorrow";
-                    timeColor = "text-orange-500 dark:text-orange-400";
-                  } else {
-                    startLabel = `Starting in ${diffDays} days`;
-                    timeColor = "text-blue-500 dark:text-blue-400";
-                  }
-                  
-                  // Determine the status style
-                  let statusColor;
-                  let statusBg;
-                  switch (giveaway.status) {
-                    case 'active':
-                      statusColor = "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800";
-                      break;
-                    case 'draft':
-                      statusColor = "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800";
-                      break;
-                    case 'paused':
-                      statusColor = "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800";
-                      break;
-                    default:
-                      statusColor = "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800/50 dark:text-gray-300 dark:border-gray-700";
-                  }
-                  
-                  return (
-                    <Link 
-                      href={`/giveaways/${encodeURIComponent(giveaway.id)}`} 
-                      key={giveaway.id}
-                      className="block" // Remove flex to use the card layout
-                    >
-                      <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-md transition-all bg-white dark:bg-gray-950">
-                        <div className="px-4 pt-4 pb-3">
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="flex-1">
-                              <h3 className="font-medium text-base line-clamp-1">{giveaway.title}</h3>
-                              <p className={`text-xs ${timeColor} font-medium flex items-center gap-1 mt-1`}>
-                                <Calendar className="h-3 w-3" />
-                                {startLabel}
-                              </p>
-                            </div>
-                            <span className={`text-xs px-2 py-1 rounded-full ${statusColor} capitalize whitespace-nowrap ml-2`}>
-                              {giveaway.status}
-                            </span>
-                          </div>
-                          
-                          <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
-                            {giveaway.description}
-                          </p>
-                        </div>
-                        
-                        <div className="flex items-center justify-between px-4 py-2 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
-                          <div className="flex items-center">
-                            <div className="flex -space-x-2">
-                              {/* Show rule indicators */}
-                              {giveaway.rules.mustFollow && (
-                                <span className="h-6 w-6 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center text-purple-600 dark:text-purple-400 text-xs border-2 border-white dark:border-gray-900" title="Must Follow">
-                                  F
-                                </span>
-                              )}
-                              {giveaway.rules.mustLike && (
-                                <span className="h-6 w-6 rounded-full bg-pink-100 dark:bg-pink-900 flex items-center justify-center text-pink-600 dark:text-pink-400 text-xs border-2 border-white dark:border-gray-900" title="Must Like">
-                                  L
-                                </span>
-                              )}
-                              {giveaway.rules.mustComment && (
-                                <span className="h-6 w-6 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xs border-2 border-white dark:border-gray-900" title="Must Comment">
-                                  C
-                                </span>
-                              )}
-                              {giveaway.rules.mustTag && (
-                                <span className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-600 dark:text-green-400 text-xs border-2 border-white dark:border-gray-900" title={`Tag ${giveaway.rules.requiredTagCount} Friend${giveaway.rules.requiredTagCount !== 1 ? 's' : ''}`}>
-                                  T
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                            <span className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              {giveaway.participants > 0 ? giveaway.participants : 'No'} participant{giveaway.participants !== 1 ? 's' : ''}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-                
-                <div className="pt-2 flex justify-center">
+              
+              <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-b from-green-50 to-teal-50/30 dark:from-green-950/30 dark:to-teal-950/10 px-4 pb-0 pt-0 text-center" style={{ minHeight: '270px' }}>
+                <div className="flex flex-col items-center justify-center py-6">
+                  <div className="rounded-full bg-blue-50 dark:bg-blue-900/20 p-4 mb-4">
+                    <Calendar className="h-8 w-8 text-blue-500 dark:text-blue-400" />
+                  </div>
+                  <h3 className="text-base font-medium mb-2">No upcoming giveaways</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    You don't have any giveaways scheduled in the next 7 days.
+                  </p>
                   <Link 
-                    href="/giveaways"
-                    className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                    href="/giveaways/create" 
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-4 py-2 rounded-md transition-all shadow-md hover:shadow-lg"
                   >
-                    View all giveaways
+                    <PlusCircle className="h-4 w-4" />
+                    Create New Giveaway
                   </Link>
                 </div>
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-                <div className="rounded-full bg-blue-50 dark:bg-blue-900/20 p-4 mb-4">
-                  <Calendar className="h-8 w-8 text-blue-500 dark:text-blue-400" />
+            </div>
+          ) : (
+            // For non-empty state, use regular Card structure
+            <>
+              <CardHeader className="bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-950/30 dark:to-teal-950/30 border-b-0 pb-3 pt-4 px-4 m-0">
+                <div className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5 text-emerald-500" />
+                      Upcoming Giveaways
+                    </CardTitle>
+                    <CardDescription>
+                      {upcomingGiveawaysData && upcomingGiveawaysData.total ? 
+                        `${upcomingGiveawaysData.total} giveaway${upcomingGiveawaysData.total !== 1 ? 's' : ''} scheduled in the next 7 days` :
+                        'Giveaways starting in the next 7 days'
+                      }
+                    </CardDescription>
+                  </div>
+                  {upcomingGiveawaysData && upcomingGiveawaysData.total > 0 && (
+                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
+                      {upcomingGiveawaysData.total} upcoming
+                    </Badge>
+                  )}
                 </div>
-                <h3 className="text-base font-medium mb-2">No upcoming giveaways</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  You don't have any giveaways scheduled in the next 7 days.
-                </p>
-                <Link 
-                  href="/giveaways/create" 
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-4 py-2 rounded-md transition-all shadow-md hover:shadow-lg"
-                >
-                  <PlusCircle className="h-4 w-4" />
-                  Create New Giveaway
-                </Link>
-              </div>
-            )}
-          </CardContent>
+              </CardHeader>
+              
+              {upcomingGiveawaysLoading ? (
+                <CardContent className="p-0">
+                  <div className="space-y-4 pt-4 px-4">
+                    {[...Array(2)].map((_, i) => (
+                      <div key={i} className="flex items-center gap-4">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-[200px]" />
+                          <Skeleton className="h-3 w-[150px]" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              ) : upcomingGiveawaysError ? (
+                <CardContent className="p-4">
+                  <div className="text-sm text-red-500 dark:text-red-400 text-center py-6">
+                    Error loading upcoming giveaways: {upcomingGiveawaysErrorData instanceof Error ? upcomingGiveawaysErrorData.message : 'Unknown error'}
+                  </div>
+                </CardContent>
+              ) : !upcomingGiveawaysData?.giveaways ? (
+                <CardContent className="p-4">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 text-center py-6">
+                    No giveaway data available. Please try again later.
+                  </div>
+                </CardContent>
+              ) : (
+                <CardContent className="pt-4 px-4 pb-0">
+                  <div className="space-y-3">
+                    {upcomingGiveawaysData.giveaways.map((giveaway) => {
+                      // Calculate days until giveaway starts
+                      const startDate = new Date(giveaway.startDate);
+                      const today = new Date();
+                      const diffTime = startDate.getTime() - today.getTime();
+                      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                      
+                      let startLabel;
+                      let timeColor;
+                      if (diffDays <= 0) {
+                        startLabel = "Starting today!";
+                        timeColor = "text-red-500 dark:text-red-400";
+                      } else if (diffDays === 1) {
+                        startLabel = "Starting tomorrow";
+                        timeColor = "text-orange-500 dark:text-orange-400";
+                      } else {
+                        startLabel = `Starting in ${diffDays} days`;
+                        timeColor = "text-blue-500 dark:text-blue-400";
+                      }
+                      
+                      // Determine the status style
+                      let statusColor;
+                      let statusBg;
+                      switch (giveaway.status) {
+                        case 'active':
+                          statusColor = "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800";
+                          break;
+                        case 'draft':
+                          statusColor = "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800";
+                          break;
+                        case 'paused':
+                          statusColor = "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800";
+                          break;
+                        default:
+                          statusColor = "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800/50 dark:text-gray-300 dark:border-gray-700";
+                      }
+                      
+                      return (
+                        <Link 
+                          href={`/giveaways/${encodeURIComponent(giveaway.id)}`} 
+                          key={giveaway.id}
+                          className="block" // Remove flex to use the card layout
+                        >
+                          <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-md transition-all bg-white dark:bg-gray-950">
+                            <div className="px-4 pt-4 pb-3">
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="flex-1">
+                                  <h3 className="font-medium text-base line-clamp-1">{giveaway.title}</h3>
+                                  <p className={`text-xs ${timeColor} font-medium flex items-center gap-1 mt-1`}>
+                                    <Calendar className="h-3 w-3" />
+                                    {startLabel}
+                                  </p>
+                                </div>
+                                <span className={`text-xs px-2 py-1 rounded-full ${statusColor} capitalize whitespace-nowrap ml-2`}>
+                                  {giveaway.status}
+                                </span>
+                              </div>
+                              
+                              <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
+                                {giveaway.description}
+                              </p>
+                            </div>
+                            
+                            <div className="flex items-center justify-between px-4 py-2 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                              <div className="flex items-center">
+                                <div className="flex -space-x-2">
+                                  {/* Show rule indicators */}
+                                  {giveaway.rules.mustFollow && (
+                                    <span className="h-6 w-6 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center text-purple-600 dark:text-purple-400 text-xs border-2 border-white dark:border-gray-900" title="Must Follow">
+                                      F
+                                    </span>
+                                  )}
+                                  {giveaway.rules.mustLike && (
+                                    <span className="h-6 w-6 rounded-full bg-pink-100 dark:bg-pink-900 flex items-center justify-center text-pink-600 dark:text-pink-400 text-xs border-2 border-white dark:border-gray-900" title="Must Like">
+                                      L
+                                    </span>
+                                  )}
+                                  {giveaway.rules.mustComment && (
+                                    <span className="h-6 w-6 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xs border-2 border-white dark:border-gray-900" title="Must Comment">
+                                      C
+                                    </span>
+                                  )}
+                                  {giveaway.rules.mustTag && (
+                                    <span className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-600 dark:text-green-400 text-xs border-2 border-white dark:border-gray-900" title={`Tag ${giveaway.rules.requiredTagCount} Friend${giveaway.rules.requiredTagCount !== 1 ? 's' : ''}`}>
+                                      T
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                <span className="flex items-center gap-1">
+                                  <Users className="h-3 w-3" />
+                                  {giveaway.participants > 0 ? giveaway.participants : 'No'} participant{giveaway.participants !== 1 ? 's' : ''}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                    
+                    <div className="pt-2 flex justify-center">
+                      <Link 
+                        href="/giveaways"
+                        className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                      >
+                        View all giveaways
+                      </Link>
+                    </div>
+                  </div>
+                </CardContent>
+              )}
+            </>
+          )}
         </Card>
       </div>
       
       {/* Daily Completion Rate card with bar chart */}
-      <Card className="hover:shadow-md transition-all overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/30 dark:to-amber-950/30 border-b border-gray-100 dark:border-gray-800">
+      <Card className="hover:shadow-md transition-all overflow-hidden p-0">
+        <CardHeader className="bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/30 dark:to-amber-950/30 border-b-0 pb-3 pt-4 px-4 m-0">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
@@ -651,19 +684,21 @@ export default function DashboardPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-0 pt-4">
-          <div className="h-[170px] w-full">
-            {timeseriesLoading ? (
-              <Skeleton className="h-full w-full" />
-            ) : activityData.length === 0 ? (
-              <div className="h-full w-full flex flex-col items-center justify-center">
-                <TrendingUp className="h-12 w-12 text-gray-200 dark:text-gray-700 mb-3" />
-                <p className="text-gray-500 dark:text-gray-400">No completion rate data available yet</p>
-                <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                  Start a giveaway to collect completion data
-                </p>
-              </div>
-            ) : (
+        {timeseriesLoading ? (
+          <CardContent className="p-0">
+            <Skeleton className="h-[170px] w-full" />
+          </CardContent>
+        ) : activityData.length === 0 ? (
+          <div className="h-[170px] w-full flex flex-col items-center justify-center bg-gradient-to-b from-yellow-50 to-amber-50/30 dark:from-yellow-950/30 dark:to-amber-950/10">
+            <TrendingUp className="h-12 w-12 text-amber-200 dark:text-amber-800/40 mb-3" />
+            <p className="text-gray-500 dark:text-gray-400 font-medium">No completion rate data available yet</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+              Start a giveaway to collect completion data
+            </p>
+          </div>
+        ) : (
+          <CardContent className="p-4 pt-4">
+            <div className="h-[170px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={activityData.slice(-14)} // Last 14 days
@@ -703,9 +738,9 @@ export default function DashboardPage() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-            )}
-          </div>
-        </CardContent>
+            </div>
+          </CardContent>
+        )}
       </Card>
     </div>
   );
