@@ -101,7 +101,7 @@ export default function DashboardPage() {
   const { data: session } = useSession();
   
   // Debug state for using mock data (only shown in development)
-  const [useMockData, setUseMockData] = useState(true);
+  const [useMockData, setUseMockData] = useState(false);
   const isDevelopment = process.env.NODE_ENV === 'development';
   
   // Fetch overview statistics
