@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -47,7 +47,8 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "webpack": "^5.98.0"
   },
   "// DEPENDENCY NOTES": "This project uses React 19 which has compatibility issues with some dependencies like react-day-picker. Use --legacy-peer-deps when installing."
 }
