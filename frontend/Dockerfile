@@ -10,7 +10,7 @@ ENV DOPPLER_ENVIRONMENT=$DOPPLER_ENVIRONMENT
 WORKDIR /app
 
 # Install Doppler CLI
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl gnupg
 RUN curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh | sh
 
 # Install dependencies
@@ -37,7 +37,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Install Doppler CLI in production image
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl gnupg
 RUN curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh | sh
 
 # Copy necessary files from build stage
