@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function InstagramAuthError() {
+// Client component that uses the useSearchParams hook
+function InstagramAuthErrorClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error") || "Unknown error";
@@ -61,5 +62,32 @@ export default function InstagramAuthError() {
         </CardFooter>
       </Card>
     </div>
+  );
+}
+
+// Loading fallback for Suspense
+function ErrorPageLoading() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <Card className="max-w-md w-full">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-bold">Loading...</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center">
+          <p className="text-sm text-muted-foreground">
+            Please wait while we process your request.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function InstagramAuthError() {
+  return (
+    <Suspense fallback={<ErrorPageLoading />}>
+      <InstagramAuthErrorClient />
+    </Suspense>
   );
 } 

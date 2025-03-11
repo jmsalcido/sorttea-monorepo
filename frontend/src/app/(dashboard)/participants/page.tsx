@@ -50,7 +50,7 @@ export default function ParticipantsPage() {
       />
       
       {/* Pagination */}
-      {!isLoading && !error && data?.total > 0 && (
+      {!isLoading && !error && data?.total !== undefined && data.total > 0 && (
         <Pagination className="mt-4">
           <PaginationContent>
             <PaginationItem>
@@ -95,7 +95,7 @@ export default function ParticipantsPage() {
               ) {
                 return (
                   <PaginationItem key={pageNumber}>
-                    <PaginationLink disabled>...</PaginationLink>
+                    <PaginationLink href="#" disabled>...</PaginationLink>
                   </PaginationItem>
                 );
               }

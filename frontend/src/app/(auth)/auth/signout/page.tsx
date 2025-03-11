@@ -1,13 +1,30 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
-export default function SignOut() {
+// Loading component for Suspense
+function SignOutLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 flex flex-col items-center">
+          <CardTitle className="text-2xl font-bold">Loading...</CardTitle>
+        </CardHeader>
+        <CardContent className="flex justify-center p-6">
+          <div className="animate-pulse h-8 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Client component with hooks
+function SignOutClient() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -58,5 +75,14 @@ export default function SignOut() {
         </CardFooter>
       </Card>
     </div>
+  );
+}
+
+// Main component with Suspense
+export default function SignOut() {
+  return (
+    <Suspense fallback={<SignOutLoading />}>
+      <SignOutClient />
+    </Suspense>
   );
 } 
