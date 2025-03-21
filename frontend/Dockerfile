@@ -17,11 +17,13 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci
 
-# Copy all source files and config files
-COPY tsconfig.json ./
-COPY next.config.ts ./
+# Copy source files
 COPY src ./src
 COPY public ./public
+COPY tsconfig.json ./
+COPY next.config.ts ./
+COPY package.json ./
+COPY package-lock.json ./
 
 # Set environment variable to skip TypeScript checks
 ENV NEXT_SKIP_TYPESCRIPT_CHECK=true
