@@ -15,7 +15,7 @@ RUN curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/instal
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy the rest of the application
+# Copy all source files
 COPY . .
 
 # Set environment variable to skip TypeScript checks
@@ -45,6 +45,9 @@ COPY --from=base /app/package-lock.json ./
 COPY --from=base /app/next.config.ts ./
 COPY --from=base /app/public ./public
 COPY --from=base /app/.next ./.next
+COPY --from=base /app/src ./src
+COPY --from=base /app/tsconfig.json ./
+COPY --from=base /app/next-env.d.ts ./
 
 # Install only production dependencies
 RUN npm ci --omit=dev
