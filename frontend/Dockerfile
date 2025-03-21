@@ -11,12 +11,18 @@ WORKDIR /app
 RUN apk add --no-cache curl gnupg
 RUN curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh | sh
 
+# Copy package files first
+COPY package*.json ./
+
 # Install dependencies
-COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy all source files
-COPY . .
+# Copy all source files and config files
+COPY tsconfig.json ./
+COPY next.config.ts ./
+COPY next-env.d.ts ./
+COPY src ./src
+COPY public ./public
 
 # Set environment variable to skip TypeScript checks
 ENV NEXT_SKIP_TYPESCRIPT_CHECK=true
