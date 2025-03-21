@@ -40,7 +40,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN_BACKEND }}
-            DOPPLER_ENVIRONMENT=prd
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -86,7 +85,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             DOPPLER_TOKEN=${{ secrets.DOPPLER_TOKEN_FRONTEND }}
-            DOPPLER_ENVIRONMENT=prd
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
