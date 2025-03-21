@@ -20,12 +20,13 @@ RUN npm ci
 # Copy all source files and config files
 COPY tsconfig.json ./
 COPY next.config.ts ./
-COPY next-env.d.ts ./
 COPY src ./src
 COPY public ./public
 
 # Set environment variable to skip TypeScript checks
 ENV NEXT_SKIP_TYPESCRIPT_CHECK=true
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
 # Build the application with Doppler
 RUN doppler run -- npm run build -- --no-lint
@@ -40,6 +41,7 @@ ENV DOPPLER_TOKEN=$DOPPLER_TOKEN
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Install Doppler CLI in production image
 RUN apk add --no-cache curl gnupg
@@ -53,7 +55,6 @@ COPY --from=base /app/public ./public
 COPY --from=base /app/.next ./.next
 COPY --from=base /app/src ./src
 COPY --from=base /app/tsconfig.json ./
-COPY --from=base /app/next-env.d.ts ./
 
 # Install only production dependencies
 RUN npm ci --omit=dev
