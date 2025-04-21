@@ -17,13 +17,8 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci
 
-# Copy source files
-COPY src ./src
-COPY public ./public
-COPY tsconfig.json ./
-COPY next.config.ts ./
-COPY package.json ./
-COPY package-lock.json ./
+# Copy all source files and configs
+COPY . .
 
 # Set environment variable to skip TypeScript checks
 ENV NEXT_SKIP_TYPESCRIPT_CHECK=true
@@ -56,7 +51,8 @@ COPY --from=base /app/next.config.ts ./
 COPY --from=base /app/public ./public
 COPY --from=base /app/.next ./.next
 COPY --from=base /app/src ./src
-COPY --from=base /app/tsconfig.json ./
+COPY --from=base /app/postcss.config.mjs ./
+COPY --from=base /app/tailwind.config.js ./
 
 # Install only production dependencies
 RUN npm ci --omit=dev
