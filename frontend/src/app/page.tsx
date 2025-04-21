@@ -68,7 +68,7 @@ export default function LandingPage() {
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
               </div>
               <div className="mx-auto max-w-md w-full h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center px-3 text-xs text-gray-500 dark:text-gray-400">
-                app.sorttea.io/dashboard
+                app.sorttea.com/dashboard
               </div>
             </div>
             
