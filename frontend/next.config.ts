@@ -38,29 +38,20 @@ const nextConfig: NextConfig = {
                 value: '0',
               },
             ],
-          },
+          }
+        ]
+      : [
           {
-            // JavaScript files
-            source: '/:path*.js',
-            headers: [
-              {
-                key: 'Cache-Control',
-                value: 'no-store, max-age=0, must-revalidate',
-              }
-            ],
-          },
-          {
-            // CSS files
+            // CSS files in production
             source: '/:path*.css',
             headers: [
               {
                 key: 'Cache-Control',
-                value: 'no-store, max-age=0, must-revalidate',
+                value: 'public, max-age=31536000, immutable',
               }
             ],
-          },
-        ]
-      : []; // No extra headers in production
+          }
+        ];
   },
   
   // Basic cache configuration for development

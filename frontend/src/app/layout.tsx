@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/auth-provider";
 import { QueryClientProvider } from "@/components/query-client-provider";
-import Script from "next/script";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,9 +24,17 @@ export const metadata: Metadata = {
   description: "Manage and verify Instagram giveaway entries with ease",
 };
 
-const cacheBuster = process.env.NODE_ENV === 'development' 
-  ? `?v=${Date.now()}` 
-  : '';
+// Development-only error boundary
+const DevErrorBoundary = ({ children }: { children: React.ReactNode }) => {
+  if (process.env.NODE_ENV === 'development') {
+    return (
+      <Suspense fallback={null}>
+        {children}
+      </Suspense>
+    );
+  }
+  return <>{children}</>;
+};
 
 export default function RootLayout({
   children,
@@ -35,62 +43,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {process.env.NODE_ENV === 'development' && (
-          <>
-            <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-            <meta httpEquiv="Pragma" content="no-cache" />
-            <meta httpEquiv="Expires" content="0" />
-            <link 
-              rel="stylesheet" 
-              href={`/_next/static/css/app/layout.css${cacheBuster}`} 
-              precedence="high"
-            />
-          </>
-        )}
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <QueryClientProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              {children}
-              <Toaster position="bottom-right" />
-            </ThemeProvider>
-          </QueryClientProvider>
-        </AuthProvider>
-        
-        {process.env.NODE_ENV === 'development' && (
-          <Script id="force-css-reload" strategy="afterInteractive">
-            {`
-              (function() {
-                function reloadStylesheets() {
-                  const links = document.getElementsByTagName('link');
-                  for (let i = 0; i < links.length; i++) {
-                    const link = links[i];
-                    if (link.rel === 'stylesheet') {
-                      const href = link.href.split('?')[0];
-                      link.href = href + '?reload=' + new Date().getTime();
-                    }
-                  }
-                }
-                
-                window.addEventListener('load', reloadStylesheets);
-                
-                const originalPushState = history.pushState;
-                history.pushState = function() {
-                  originalPushState.apply(this, arguments);
-                  setTimeout(reloadStylesheets, 100);
-                };
-                
-                window.addEventListener('popstate', function() {
-                  setTimeout(reloadStylesheets, 100);
-                });
-              })();
-            `}
-          </Script>
-        )}
+        <DevErrorBoundary>
+          <AuthProvider>
+            <QueryClientProvider>
+              <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                {children}
+                <Toaster position="bottom-right" />
+              </ThemeProvider>
+            </QueryClientProvider>
+          </AuthProvider>
+        </DevErrorBoundary>
       </body>
     </html>
   );
