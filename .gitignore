@@ -23,7 +23,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -43,6 +42,8 @@ pip-log.txt
 pip-delete-this-directory.txt
 backend/logs/*
 !backend/logs/.gitkeep
+backend/lib/
+backend/staticfiles/
 
 # Database
 *.db

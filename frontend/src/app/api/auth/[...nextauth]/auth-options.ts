@@ -1,8 +1,10 @@
 import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions } from "next-auth";
+import jwt from "jsonwebtoken";
 
 // Match the same API URL format used in the API client
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const JWT_SECRET = process.env.NEXTAUTH_SECRET || "your-jwt-secret";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -56,18 +58,26 @@ export const authOptions: NextAuthOptions = {
         return false; // Block sign-in on error
       }
     },
-    async jwt({ token, account }) {
-      // Add access_token to the token right after sign in
-      if (account) {
-        token.accessToken = account.access_token;
-        token.provider = account.provider;
+    async jwt({ token, account, user }) {
+      if (account && user) {
+        // Create a custom JWT with user information
+        const customToken = jwt.sign({
+          email: user.email,
+          name: user.name,
+          picture: user.image,
+          provider: account.provider,
+          sub: account.providerAccountId,
+          iat: Math.floor(Date.now() / 1000),
+          exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60), // 24 hours
+        }, JWT_SECRET);
+        
+        token.customToken = customToken;
       }
       return token;
     },
     async session({ session, token }) {
-      // Send properties to the client
-      session.accessToken = token.accessToken as string;
-      session.provider = token.provider as string;
+      // Use the custom token for API requests
+      session.accessToken = token.customToken as string;
       return session;
     },
   },

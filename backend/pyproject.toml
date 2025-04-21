@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Backend service for managing and verifying Instagram giveaway entries"
 authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
+packages = [{include = "sorttea"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
