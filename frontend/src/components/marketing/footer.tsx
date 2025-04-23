@@ -23,23 +23,20 @@ export function MarketingFooter() {
           <div className="space-y-4">
             <h4 className="text-sm font-bold">Product</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#features" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Features</Link></li>
-              <li><Link href="#pricing" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Pricing</Link></li>
-              <li><Link href="#" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Testimonials</Link></li>
+              <li><Link href="/#features" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Features</Link></li>
+              <li><Link href="/#pricing" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Pricing</Link></li>
             </ul>
           </div>
           <div className="space-y-4">
             <h4 className="text-sm font-bold">Company</h4>
             <ul className="space-y-2 text-sm">
               <li><Link href="#" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">About</Link></li>
-              <li><Link href="#" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Blog</Link></li>
-              <li><Link href="#" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Careers</Link></li>
             </ul>
           </div>
           <div className="space-y-4">
             <h4 className="text-sm font-bold">Legal</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/privacy" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/privacy-policy" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms-of-service" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Terms of Service</Link></li>
               <li><Link href="/cookie-policy" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Cookie Policy</Link></li>
             </ul>

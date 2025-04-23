@@ -17,13 +17,13 @@ export function MarketingHeader() {
         <span className="font-bold text-xl">SortTea</span>
       </Link>
       <nav className="hidden md:flex gap-6">
-        <Link href="#features" className="text-sm font-medium hover:underline underline-offset-4">
+        <Link href="/#features" className="text-sm font-medium hover:underline underline-offset-4">
           Features
         </Link>
-        <Link href="#how-it-works" className="text-sm font-medium hover:underline underline-offset-4">
+        <Link href="/#how-it-works" className="text-sm font-medium hover:underline underline-offset-4">
           How It Works
         </Link>
-        <Link href="#pricing" className="text-sm font-medium hover:underline underline-offset-4">
+        <Link href="/#pricing" className="text-sm font-medium hover:underline underline-offset-4">
           Pricing
         </Link>
       </nav>
