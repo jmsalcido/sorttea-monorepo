@@ -8,7 +8,7 @@ ENV DOPPLER_TOKEN=$DOPPLER_TOKEN
 WORKDIR /app
 
 # Install Doppler CLI
-RUN apk add --no-cache curl gnupg
+RUN apk add --no-cache curl gnupg git
 RUN curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh | sh
 
 # Copy package files first
