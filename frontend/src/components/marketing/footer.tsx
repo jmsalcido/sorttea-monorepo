@@ -1,7 +1,25 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
+import { getGitVersion } from "@/lib/git-version";
+import { isDebugMode } from "@/lib/debug-mode";
+import { useEffect, useState } from "react";
 
 export function MarketingFooter() {
+  const [mounted, setMounted] = useState(false);
+  const [debugMode, setDebugMode] = useState(false);
+  const version = getGitVersion();
+
+  useEffect(() => {
+    setMounted(true);
+    setDebugMode(isDebugMode());
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <footer className="w-full py-6 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
       <div className="container px-4 md:px-6 mx-auto">
@@ -30,7 +48,7 @@ export function MarketingFooter() {
           <div className="space-y-4">
             <h4 className="text-sm font-bold">Company</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">About</Link></li>
+              <li><Link href="/about" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">About</Link></li>
             </ul>
           </div>
           <div className="space-y-4">
@@ -43,9 +61,16 @@ export function MarketingFooter() {
           </div>
         </div>
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            © 2025 SortTea. All rights reserved.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-2">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              © 2025 SortTea. All rights reserved.
+            </p>
+            {debugMode && (
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Version: {version}
+              </p>
+            )}
+          </div>
           <div className="flex items-center gap-4 mt-4 sm:mt-0">
             <Link href="#" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">

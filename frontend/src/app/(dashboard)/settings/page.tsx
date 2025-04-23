@@ -26,6 +26,7 @@ import {
   AlertTriangle,
   Calendar
 } from "lucide-react";
+import { DebugModeToggle } from "@/components/debug-mode-toggle";
 
 // Validation schema for profile form
 const profileFormSchema = z.object({
@@ -424,6 +425,16 @@ export default function SettingsPage() {
                         )}
                       </span>
                       <span className="text-xs text-muted-foreground">Role permissions are managed by administrators</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 p-3 rounded-lg -mx-3 transition-all hover:bg-gray-50/50 dark:hover:bg-gray-900/50">
+                    <Label className="text-sm font-medium">Debug Mode</Label>
+                    <div className="p-3 bg-gray-50/80 dark:bg-gray-900/80 rounded-md border">
+                      <DebugModeToggle />
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Enable debug mode to see additional information and version details.
+                      </p>
                     </div>
                   </div>
                   
